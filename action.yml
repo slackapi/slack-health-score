@@ -1,0 +1,13 @@
+name: 'slack-health-score'
+description: 'Report some code quality heuristics as defined by Slack Engineering'
+inputs:
+  extension:
+    description: 'File extension of files to filter on to search for problematic comments. E.g. "js" or "go"'
+    required: true
+  ignore:
+    description: 'Ignore files that include this string in their path. E.g. "node_modules"'
+    required: false
+outputs:
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
