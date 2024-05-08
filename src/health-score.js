@@ -1,7 +1,7 @@
 const child_process = require('child_process');
 
 module.exports = {
-  calc: async function calculateScore(core) {
+  calc: async function calculateScore(/* core */) {
     // TODO: wire up action inputs
     module.exports.grep('js', 'node_modules');
     // TODO: wire up action outputs
@@ -11,7 +11,7 @@ module.exports = {
     if (ignore) {
       find += ` -not -path "*/${ignore}/*"`;
     }
-    find += ` -exec grep -E 'TODO|HACK|FIXME' {} \\; | wc -l`;
+    find += ' -exec grep -E \'TODO|HACK|FIXME\' {} \\; | wc -l';
     let count = 0;
     console.log(find);
     try {
@@ -21,5 +21,5 @@ module.exports = {
       // TODO: handle error
     }
     return count;
-  }
-}
+  },
+};
