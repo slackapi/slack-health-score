@@ -3,7 +3,7 @@ const child_process = require('child_process');
 module.exports = {
   calc: async function calculateScore(/* core */) {
     // TODO: wire up action inputs
-    module.exports.grep('js', 'node_modules');
+    console.log(module.exports.grep('js', 'node_modules'));
     // TODO: wire up action outputs
   },
   grep: async function grepForProblematicComments(ext, ignore) {
