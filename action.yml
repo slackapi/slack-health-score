@@ -7,7 +7,7 @@ inputs:
   ignore:
     description: 'Ignore files that include this string in their path. E.g. "node_modules"'
     required: false
-outputs:
+# outputs:
 runs:
   using: 'node20'
   main: 'dist/index.js'
