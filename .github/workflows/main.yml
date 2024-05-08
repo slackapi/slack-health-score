@@ -23,3 +23,8 @@ jobs:
         directory: ./coverage
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: slackapi/slack-health-score
+    - name: Yo dawg I heard you like healthscores so I healthscored your healthscore so you can healthscore while you healthscore
+      uses: ./
+      with:
+        extension: js
+        ignore: node_modules
