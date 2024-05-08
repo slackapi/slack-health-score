@@ -1,12 +1,12 @@
 const child_process = require('child_process');
 
 module.exports = {
-  calc: async function calculateScore(/* core */) {
+  calc: function calculateScore(/* core */) {
     // TODO: wire up action inputs
-    console.log(module.exports.grep('js', 'node_modules'));
+    return module.exports.grep('js', 'node_modules');
     // TODO: wire up action outputs
   },
-  grep: async function grepForProblematicComments(ext, ignore) {
+  grep: function grepForProblematicComments(ext, ignore) {
     let find = `find . -name "*.${ext}"`;
     if (ignore) {
       find += ` -not -path "*/${ignore}/*"`;
