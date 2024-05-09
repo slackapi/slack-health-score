@@ -3,6 +3,8 @@ const child_process = require('child_process');
 module.exports = {
   calc: function calculateScore(/* core */) {
     // TODO: wire up action inputs
+    console.log('pwd:', child_process.execSync('pwd').toString());
+    console.log('ls -al:', child_process.execSync('ls -al').toString());
     return module.exports.grep('js', 'node_modules');
     // TODO: wire up action outputs
   },
