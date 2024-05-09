@@ -8,7 +8,7 @@
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
     "test:mocha": "mocha --config .mocharc.json test/*-test.js",
     "test:gen-cov": "nyc --reporter=lcov npm run test:mocha",
-    "test": "npm run lint && nyc npm run test:mocha",
+    "test": "npm run lint && nyc npm run test:mocha"
   },
   "repository": {
     "type": "git",
