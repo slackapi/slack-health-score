@@ -4,6 +4,9 @@ inputs:
   extension:
     description: 'File extension of files to filter on to search for problematic comments. E.g. "js" or "go"'
     required: true
+  github_token:
+    description: 'A GitHub access token with permissions to write commit statuses. Recommended to set this to `${{ secrets.GITHUB_TOKEN }}`.'
+    required: true
   include:
     description: 'Only parse the specified files and directories (recursively). Ideally supports glob syntax? Defaults to contents of `.`. E.g. "src"'
     required: false
@@ -13,4 +16,4 @@ inputs:
 # outputs:
 runs:
   using: 'node20'
-  main: 'dist/index.js'
+  main: 'src/index.js'

@@ -2,14 +2,13 @@
   "name": "slack-health-score",
   "version": "0.0.1",
   "description": "A rough health score reporter",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
     "lint": "eslint .",
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
     "test:mocha": "mocha --config .mocharc.json test/*-test.js",
     "test:gen-cov": "nyc --reporter=lcov npm run test:mocha",
     "test": "npm run lint && nyc npm run test:mocha",
-    "build": "npx @vercel/ncc build src/index.js --license licenses.txt"
   },
   "repository": {
     "type": "git",
@@ -37,7 +36,6 @@
     "@actions/github": "^6.0.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.38.1",
     "chai": "^4.3.10",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",

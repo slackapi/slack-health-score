@@ -12,10 +12,11 @@ jobs:
     - name: Checkout action
       uses: actions/checkout@v4
     - name: Build action
-      run: npm install && npm run build -- -d
+      run: npm install
     - name: Healthscore the healthscore
       id: slack-health-score
       uses: ./.
       with:
+        github_token: garbage
         extension: js
         include: src

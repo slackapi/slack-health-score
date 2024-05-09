@@ -2,12 +2,15 @@ const child_process = require('child_process');
 const fs = require('fs');
 
 module.exports = {
-  calc: function calculateScore(/* core */) {
-    // TODO: wire up action inputs
-    console.log('pwd:', child_process.execSync('pwd').toString());
-    console.log('ls -al:', child_process.execSync('ls -al').toString());
+  /**
+   * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
+   * @returns {number} Total calculated health score
+   */
+  calc: function calculateScore(core) {
     // TODO: wire up action outputs
-    return module.exports.grep('js', ['src'], []);
+    return (
+      (module.exports.grep(core.getInput('extension'), ['src'], []) * 100) // to-do et al comments
+    ) * -1;
   },
   grep: function grepForProblematicComments(ext, include, exclude) {
     let find = 'find';
