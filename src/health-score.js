@@ -13,7 +13,7 @@ module.exports = {
     if (ignore) {
       find += ` -not -path "*/${ignore}/*"`;
     }
-    find += ' -exec grep -E \'TODO|HACK|FIXME\' {} \\; | wc -l';
+    find += ' -exec grep -E \'TODO|HACK|FIXME\' {} \\;';
     let count = 0;
     console.log(find);
     try {
