@@ -17,8 +17,9 @@ module.exports = {
     let count = 0;
     console.log(find);
     try {
-      const out = child_process.execSync(find);
-      count = parseInt(out.toString().trim(), 10);
+      const out = child_process.execSync(find).toString().trim();
+      console.log(out);
+      count = parseInt(out, 10);
     } catch (e) {
       // TODO: handle error
     }
