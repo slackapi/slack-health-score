@@ -27,4 +27,4 @@ jobs:
       uses: ./
       with:
         extension: js
-        ignore: node_modules
+        include: src
