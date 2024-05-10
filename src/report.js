@@ -24,6 +24,16 @@ module.exports = async function reportStatus(startTime, core, github, score) {
   // Report the thing
   const ctx = github.context;
   const octokit = github.getOctokit(gh);
+  let details = `# Score Breakdown
+
+## Problematic Comments
+${score.comments.map((c) => `- \`${c.trim()}\``).join('\n')}\n`;
+  if (score.coverageMisses) {
+    details += `\n## Code Coverage
+
+According to [the code coverage for this project](https://app.codecov.io/gh/${ctx.repo.owner}/${ctx.repo.repo}), there are ${score.coverageMisses} uncovered lines of code.`;
+  }
+
   // TODO: handle API call erroring out
   await octokit.rest.checks.create({
     name: 'Health Score',
@@ -37,10 +47,7 @@ module.exports = async function reportStatus(startTime, core, github, score) {
     output: {
       title: `${points}`,
       summary: `${points} health score points`,
-      text: `# Score Breakdown
-
-## Problematic Comments
-${score.comments.map((c) => `- \`${c.trim()}\``).join('\n')}`,
+      text: details,
     },
   });
   return points;
