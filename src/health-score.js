@@ -94,11 +94,9 @@ module.exports = {
       completed_at: new Date().toISOString(),
       started_at: startTime.toISOString(),
       output: {
-        title: 'Calculate Health Score',
-        summary: `${points} points`,
-        text: `Details:
-
-Problematic comments:\n${score.comments.map((c) => `  ${c}`).join('\n')}`,
+        title: `${points}`,
+        summary: `${points} health score points`,
+        text: `Problematic comments:\n${score.comments.map((c) => ` - ${c}`).join('\n')}`,
       },
     });
     console.log(res);
