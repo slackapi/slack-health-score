@@ -25,6 +25,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
         misses = coverage.data.totals.misses;
       }
     } catch (e) {
+      core.error('Failed to retrieve codecov commits');
       core.error(e);
     }
   }
