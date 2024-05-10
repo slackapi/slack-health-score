@@ -73,17 +73,31 @@ module.exports = {
     // Report the thing
     const ctx = github.context;
     const octokit = github.getOctokit(gh);
-    const res = await octokit.rest.repos.createCommitStatus({
+    console.log('getting suites for ref', await octokit.rest.checks.listSuitesForRef({
+      ref: ctx.ref,
+      repo: ctx.repo.repo,
+      owner: ctx.repo.owner,
+    }));
+    /*
+    const res = await octokit.rest.checks.create({
+      name: 'Health Score',
       owner: ctx.repo.owner,
       repo: ctx.repo.repo,
-      sha: ctx.sha,
-      state: 'success',
-      context: 'Slack Health Score',
-      description: `Details:
+      head_sha: ctx.sha,
+      status: 'completed',
+      conclusion: 'neutral',
+      completed_at: new Date().toISOString(),
+      started_at: startTime.toISOString(),
+      output: {
+        title: 'Calculate Health Score',
+        summary: `${points} points`,
+        text: `Details:
 
 Problematic comments:\n${score.comments.map((c) => `  ${c}`).join('\n')}`,
+      },
     });
     console.log(res);
+    */
     return points;
   },
 };
