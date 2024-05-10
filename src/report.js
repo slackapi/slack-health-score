@@ -14,7 +14,7 @@ module.exports = async function reportStatus(startTime, core, github, score) {
     return 0;
   }
 
-  core.info(score);
+  core.info(JSON.stringify(score, null, 2));
   // Calculate score
   const points = (
     (score.comments.length * 100)

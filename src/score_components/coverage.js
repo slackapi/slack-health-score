@@ -12,7 +12,6 @@ module.exports = async function retrieveCodeCoverage(core, github) {
   const codecovToken = core.getInput('codecov_token');
   let misses = 0;
   if (codecovToken) {
-    core.info(codecovToken.length);
     const ctx = github.context;
     codecov.auth(codecovToken);
     try {
@@ -24,6 +23,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
       });
       if (coverage && coverage.data && coverage.data.totals && coverage.data.totals.misses) {
         misses = coverage.data.totals.misses;
+        core.info(`${misses} uncovered lines according to codecov`);
       }
     } catch (e) {
       core.error('Failed to retrieve codecov commits');
