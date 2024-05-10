@@ -21,6 +21,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
         repo_name: ctx.repo.repo,
         commitid: getSHA(core, github),
       });
+      core.info(`codecov api response: ${JSON.stringify(coverage, null, 2)}`);
       if (coverage && coverage.data && coverage.data.totals && coverage.data.totals.misses) {
         misses = coverage.data.totals.misses;
         core.info(`${misses} uncovered lines according to codecov`);
