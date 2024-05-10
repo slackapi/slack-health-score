@@ -28,7 +28,7 @@ module.exports = async function reportStatus(startTime, core, github, score) {
     name: 'Health Score',
     owner: ctx.repo.owner,
     repo: ctx.repo.repo,
-    head_sha: getSHA(github),
+    head_sha: getSHA(core, github),
     status: 'completed',
     conclusion: 'neutral',
     completed_at: new Date().toISOString(),

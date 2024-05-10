@@ -14,15 +14,18 @@ module.exports = async function retrieveCodeCoverage(core, github) {
   if (codecovToken) {
     const ctx = github.context;
     codecov.auth(codecovToken);
-    // TODO: handle API error
-    const coverage = await codecov.repos_commits_retrieve({
-      service: 'github',
-      owner_username: ctx.repo.owner,
-      repo_name: ctx.repo.repo,
-      commitid: getSHA(github),
-    });
-    if (coverage && coverage.data && coverage.data.totals && coverage.data.totals.misses) {
-      misses = coverage.data.totals.misses;
+    try {
+      const coverage = await codecov.repos_commits_retrieve({
+        service: 'github',
+        owner_username: ctx.repo.owner,
+        repo_name: ctx.repo.repo,
+        commitid: getSHA(core, github),
+      });
+      if (coverage && coverage.data && coverage.data.totals && coverage.data.totals.misses) {
+        misses = coverage.data.totals.misses;
+      }
+    } catch (e) {
+      core.error(e);
     }
   }
   return misses;
