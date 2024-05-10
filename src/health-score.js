@@ -9,13 +9,13 @@ module.exports = {
    * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
    * @returns {import('./types').HealthScore} score Health score details object
    */
-  compile: function compileScore(core, github) {
+  compile: async function compileScore(core, github) {
     // TODO: wire up action outputs
     return {
       // TODO: support src as arrays
       // TODO: wire up exclude input
       comments: module.exports.grep(core.getInput('extension'), [core.getInput('include') || '.'], []), // to-do et al comments
-      coverageMisses: module.exports.coverage(core, github), // uncovered LoC
+      coverageMisses: await module.exports.coverage(core, github), // uncovered LoC
     };
   },
   grep: findProblematicComments,
