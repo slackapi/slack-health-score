@@ -72,13 +72,8 @@ module.exports = {
 
     // Report the thing
     const ctx = github.context;
+    console.log('github event, sha and payload', ctx.eventName, ctx.sha, ctx.payload);
     const octokit = github.getOctokit(gh);
-    console.log('getting suites for ref', await octokit.rest.checks.listSuitesForRef({
-      ref: ctx.ref,
-      repo: ctx.repo.repo,
-      owner: ctx.repo.owner,
-    }));
-    /*
     const res = await octokit.rest.checks.create({
       name: 'Health Score',
       owner: ctx.repo.owner,
@@ -97,7 +92,6 @@ Problematic comments:\n${score.comments.map((c) => `  ${c}`).join('\n')}`,
       },
     });
     console.log(res);
-    */
     return points;
   },
 };
