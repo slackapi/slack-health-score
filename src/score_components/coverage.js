@@ -32,6 +32,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
           if (coverage.data.totals && coverage.data.totals.misses) {
             misses = coverage.data.totals.misses;
             core.info(`${misses} uncovered lines according to codecov`);
+            break;
           } else {
             core.info('codecov response data present but missing totals, delaying');
             // if totals are missing, probably codecov has not compiled the coverage info yet; delay and try again.
@@ -47,6 +48,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
       } catch (e) {
         core.error('Failed to retrieve codecov commits');
         core.error(e);
+        break;
       }
     }
   }
