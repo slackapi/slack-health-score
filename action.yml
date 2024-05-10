@@ -4,10 +4,16 @@ inputs:
   extension:
     description: 'File extension of files to filter on to search for problematic comments. E.g. "js" or "go"'
     required: true
-  ignore:
-    description: 'Ignore files that include this string in their path. E.g. "node_modules"'
+  github_token:
+    description: 'A GitHub access token with permissions to write commit statuses. Recommended to set this to `secrets.GITHUB_TOKEN`.'
+    required: true
+  include:
+    description: 'Only parse the specified files and directories (recursively). Ideally supports glob syntax? Defaults to contents of `.`. E.g. "src"'
+    required: false
+  exclude:
+    description: 'Ignore the specified files and directories. Essentially a direct argument into `find` `-not -path "{arg}"`. Defaults to contents of `.gitignore`. E.g. "node_modules"'
     required: false
 # outputs:
 runs:
   using: 'node20'
-  main: 'dist/index.js'
+  main: 'src/index.js'

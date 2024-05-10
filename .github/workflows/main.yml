@@ -14,7 +14,6 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.sha }}
     - run: npm ci
-    - run: npm run build
     - run: npm test
     - run: npm run test:gen-cov
     - name: Upload coverage to CodeCov
@@ -26,5 +25,6 @@ jobs:
     - name: Yo dawg I heard you like healthscores so I healthscored your healthscore so you can healthscore while you healthscore
       uses: ./
       with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         extension: js
-        ignore: node_modules
+        include: src
