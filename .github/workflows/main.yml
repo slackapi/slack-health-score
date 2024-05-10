@@ -25,7 +25,7 @@ jobs:
     - name: Yo dawg I heard you like healthscores so I healthscored your healthscore so you can healthscore while you healthscore
       uses: ./
       with:
-        codecov_token: ${{ secrets.CODECOV_TOKEN }}
+        codecov_token: ${{ secrets.FILS_CODECOV_API_TOKEN }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
         extension: js
         include: src
