@@ -14,11 +14,6 @@ module.exports = async function retrieveCodeCoverage(core, github) {
   const codecovToken = core.getInput('codecov_token');
   let misses = 0;
   let attempts = 1;
-  const delay = async function delay() {
-    // if totals are missing, probably codecov has not compiled the coverage info yet; delay and try again.
-    attempts += 1;
-    await sleep(RETRY_DELAY);
-  };
 
   if (codecovToken) {
     const ctx = github.context;
@@ -39,11 +34,15 @@ module.exports = async function retrieveCodeCoverage(core, github) {
             core.info(`${misses} uncovered lines according to codecov`);
           } else {
             core.info('codecov response data present but missing totals, delaying');
-            await delay();
+            // if totals are missing, probably codecov has not compiled the coverage info yet; delay and try again.
+            attempts += 1;
+            await sleep(RETRY_DELAY);
           }
         } else {
           core.info('codecov response data missing, delaying');
-          await delay();
+          // if totals are missing, probably codecov has not compiled the coverage info yet; delay and try again.
+          attempts += 1;
+          await sleep(RETRY_DELAY);
         }
       } catch (e) {
         core.error('Failed to retrieve codecov commits');
