@@ -72,6 +72,7 @@ module.exports = {
 
     // Report the thing
     const ctx = github.context;
+    // TODO: replace console logs with core.debug et al
     console.log('github event, payload', ctx.eventName, ctx.payload);
     let sha;
     switch (ctx.eventName) {
@@ -84,7 +85,7 @@ module.exports = {
     }
     const octokit = github.getOctokit(gh);
     // TODO: handle API call erroring out
-    const res = await octokit.rest.checks.create({
+    await octokit.rest.checks.create({
       name: 'Health Score',
       owner: ctx.repo.owner,
       repo: ctx.repo.repo,
@@ -102,7 +103,6 @@ module.exports = {
 ${score.comments.map((c) => `- \`${c.trim()}\``).join('\n')}`,
       },
     });
-    console.log(res);
     return points;
   },
 };
