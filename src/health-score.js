@@ -72,13 +72,23 @@ module.exports = {
 
     // Report the thing
     const ctx = github.context;
-    console.log('github event, sha and payload', ctx.eventName, ctx.sha, ctx.payload);
+    console.log('github event, payload', ctx.eventName, ctx.payload);
+    let sha;
+    switch (ctx.eventName) {
+      case 'pull_request':
+        sha = ctx.payload.after;
+        break;
+      // TODO: what about the push-to-main case?
+      default:
+        sha = ctx.sha;
+    }
     const octokit = github.getOctokit(gh);
+    // TODO: handle API call erroring out
     const res = await octokit.rest.checks.create({
       name: 'Health Score',
       owner: ctx.repo.owner,
       repo: ctx.repo.repo,
-      head_sha: ctx.sha,
+      head_sha: sha,
       status: 'completed',
       conclusion: 'neutral',
       completed_at: new Date().toISOString(),
