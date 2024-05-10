@@ -47,7 +47,10 @@ module.exports = {
       case 'pull_request':
         sha = ctx.payload.after;
         break;
-      // TODO: what about the push-to-main case?
+      case 'pull_request_target':
+        console.log('base sha', ctx.sha, 'pull_request.head.sha', ctx.payload.pull_request.head.sha);
+        sha = ctx.payload.pull_request.head.sha;
+        break;
       default:
         sha = ctx.sha;
     }
