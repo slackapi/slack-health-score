@@ -1,7 +1,7 @@
 const core = require('@actions/core');
+const github = require('@actions/github');
 const hs = require('./health-score');
 
-const score = hs.calc(core);
-console.log(score);
-// TODO: report the score using github status checks
-// hs.report(score);
+const startTime = new Date();
+const score = hs.compile(core);
+hs.report(startTime, core, github, score).then(console.log);
