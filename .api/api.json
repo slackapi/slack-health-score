@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "codecov",
+      "source": "@codecov/v2023#206yozhlvcrralp",
+      "integrity": "sha512-GouN8Ug0J5d9+F5ylYJnGLSLXpdeBB2ihMfEemZXPhEhGbcqKBSBKxiyGdGYYKd5LWA2NmD6Fd+GnwXe5MHTCA==",
+      "installerVersion": "6.1.1"
+    }
+  ]
+}

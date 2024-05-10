@@ -46,6 +46,8 @@ module.exports = {
     // TypeScript). This section does not contain rules meant to override options or disable rules in the base
     // configurations (ESLint, Node, AirBnb). Those rules are added in the final override.
 
+    'no-await-in-loop': 'off',
+
     // Eliminate tabs to standardize on spaces for indentation. If you want to use tabs for something other than
     // indentation, you may need to turn this rule off using an inline config comments.
     'no-tabs': 'error',
@@ -104,7 +106,7 @@ module.exports = {
       },
     },
     {
-      files: ['src/test/*.js'],
+      files: ['test/*.js'],
       rules: {
         // Test-specific rules
         // ---
