@@ -1,6 +1,8 @@
 const codecov = require('@api/codecov');
 const getSHA = require('../get-sha');
 
+const RETRY_DELAY = 10000;
+
 /**
  * @description Compiles the health score components
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
@@ -31,9 +33,9 @@ module.exports = async function retrieveCodeCoverage(core, github) {
             core.info(`${misses} uncovered lines according to codecov`);
           } else {
             // if totals are missing, probably codecov has not compiled the coverage info yet; delay and try again.
-            core.info('No coverage details available yet; sleeping for 3 seconds.');
+            core.info(`No coverage details available yet; sleeping for ${RETRY_DELAY / 1000} seconds.`);
             attempts += 1;
-            await sleep(3000);
+            await sleep(RETRY_DELAY);
           }
         } else {
           // TODO: if there's no data, what do we do?
