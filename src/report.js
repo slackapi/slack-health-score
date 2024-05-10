@@ -14,10 +14,11 @@ module.exports = async function reportStatus(startTime, core, github, score) {
     return 0;
   }
 
+  core.info(score);
   // Calculate score
   const points = (
-    score.comments.length * 100
-  + score.coverageMisses * 1
+    (score.comments.length * 100)
+    + (score.coverageMisses * 1)
   ) * -1;
 
   // Report the thing

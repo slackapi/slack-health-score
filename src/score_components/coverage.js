@@ -12,6 +12,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
   const codecovToken = core.getInput('codecov_token');
   let misses = 0;
   if (codecovToken) {
+    core.info(codecovToken.length);
     const ctx = github.context;
     codecov.auth(codecovToken);
     try {
