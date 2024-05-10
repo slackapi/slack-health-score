@@ -9,7 +9,7 @@ inputs:
     required: true
   codecov_token:
     description: 'A CodeCov access token with read permissions to the repo. Setting this will try to pull coverage information for the repo from CodeCov to include in health score calculation.'
-    required: true
+    required: false
   include:
     description: 'Only parse the specified files and directories (recursively). Ideally supports glob syntax? Defaults to contents of `.`. E.g. "src"'
     required: false

@@ -23,6 +23,7 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
     find += ` -not -path "*/${ex}/*" -not -path "*/${ex}"`;
   });
   find += ' -exec grep -E \'TODO|HACK|FIXME\' {} \\;';
+  // TODO: use core.warn/info/debug
   console.log(find);
   let output;
   try {
