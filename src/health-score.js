@@ -96,7 +96,10 @@ module.exports = {
       output: {
         title: `${points}`,
         summary: `${points} health score points`,
-        text: `Problematic comments:\n${score.comments.map((c) => ` - ${c}`).join('\n')}`,
+        text: `# Score Breakdown
+
+## Problematic Comments
+${score.comments.map((c) => `- \`${c.trim()}\``).join('\n')}`,
       },
     });
     console.log(res);
