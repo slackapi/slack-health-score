@@ -1,5 +1,8 @@
 const getSHA = require('./get-sha');
 
+const UNCOVERED_LINE_PENALTY = 1;
+const PROBLEMATIC_COMMENT_PENALTY = 100;
+
 /**
  * @param {Date} startTime the JavaScript Date of the start of this action's run
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
@@ -17,8 +20,8 @@ module.exports = async function reportStatus(startTime, core, github, score) {
   core.info(JSON.stringify(score, null, 2));
   // Calculate score
   const points = (
-    (score.comments.length * 100)
-    + (score.coverageMisses * 1)
+    (score.comments.length * PROBLEMATIC_COMMENT_PENALTY)
+    + (score.coverageMisses * UNCOVERED_LINE_PENALTY)
   ) * -1;
 
   // Report the thing
@@ -27,11 +30,14 @@ module.exports = async function reportStatus(startTime, core, github, score) {
   let details = `# Score Breakdown
 
 ## Problematic Comments
+
+Each problematic comment (i.e. comments with TODO, HACK or FIXME in it) contributes -${PROBLEMATIC_COMMENT_PENALTY} points to the health score.
+
 ${score.comments.map((c) => `- \`${c.trim()}\``).join('\n')}\n`;
   if (score.coverageMisses) {
     details += `\n## Code Coverage
 
-According to [the code coverage for this project](https://app.codecov.io/gh/${ctx.repo.owner}/${ctx.repo.repo}), there are ${score.coverageMisses} uncovered lines of code.`;
+According to [the code coverage for this project](https://app.codecov.io/gh/${ctx.repo.owner}/${ctx.repo.repo}), there are ${score.coverageMisses} uncovered lines of code. Each uncovered line of code contributes -${UNCOVERED_LINE_PENALTY} to the health score.`;
   }
 
   // TODO: handle API call erroring out
