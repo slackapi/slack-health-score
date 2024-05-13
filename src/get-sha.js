@@ -20,5 +20,8 @@ module.exports = function getCommitSHA(core, github) {
     default:
       sha = ctx.sha;
   }
+  if (!sha) {
+    throw new Error(`Could not determine SHA from GitHub context payload: ${JSON.stringify(ctx, null, 2)}`);
+  }
   return sha;
 };
