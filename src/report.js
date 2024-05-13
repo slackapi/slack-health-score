@@ -28,12 +28,15 @@ module.exports = async function reportStatus(startTime, core, github, score) {
   const ctx = github.context;
   const octokit = github.getOctokit(gh);
   let details = `# Score Breakdown
-
+`;
+  if (score.comments && score.comments.length) {
+    details += `
 ## Problematic Comments
 
 Each problematic comment (i.e. comments with TODO, HACK or FIXME in it) contributes -${PROBLEMATIC_COMMENT_PENALTY} points to the health score.
 
 ${score.comments.map((c) => `- \`${c.trim()}\``).join('\n')}\n`;
+  }
   if (score.coverageMisses) {
     details += `\n## Code Coverage
 
