@@ -12,7 +12,7 @@ module.exports = function getCommitSHA(core, github) {
   // fields representing the correct SHA
   switch (ctx.eventName) {
     case 'pull_request':
-      sha = ctx.payload.after || ctx.sha;
+      sha = ctx.payload.after || ctx.payload.pull_request.head.sha || ctx.sha;
       break;
     case 'pull_request_target':
       sha = ctx.payload.pull_request.head.sha;
@@ -23,5 +23,6 @@ module.exports = function getCommitSHA(core, github) {
   if (!sha) {
     throw new Error(`Could not determine SHA from GitHub context payload: ${JSON.stringify(ctx, null, 2)}`);
   }
+  core.log(`Using SHA: ${sha}`);
   return sha;
 };
