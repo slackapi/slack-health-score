@@ -12,7 +12,7 @@ module.exports = function getCommitSHA(core, github) {
   // fields representing the correct SHA
   switch (ctx.eventName) {
     case 'pull_request':
-      sha = ctx.payload.after;
+      sha = ctx.payload.after || ctx.sha;
       break;
     case 'pull_request_target':
       sha = ctx.payload.pull_request.head.sha;
