@@ -1,6 +1,6 @@
 {
   "name": "slack-health-score",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A rough health score reporter",
   "main": "dist/index.js",
   "scripts": {
