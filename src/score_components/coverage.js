@@ -18,6 +18,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
   if (codecovToken) {
     const ctx = github.context;
     codecov.auth(codecovToken);
+    const sha = getSHA(core, github);
     while (attempts < 10) {
       try {
         core.info('Pinging codecov API for coverage data...');
@@ -25,7 +26,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
           service: 'github',
           owner_username: ctx.repo.owner,
           repo_name: ctx.repo.repo,
-          commitid: getSHA(core, github),
+          commitid: sha,
         });
         // core.info(`codecov api response: ${JSON.stringify(coverage, null, 2)}`);
         if (coverage && coverage.data) {
