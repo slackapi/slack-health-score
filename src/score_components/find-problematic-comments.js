@@ -20,7 +20,13 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
       .map((entry) => entry.trim());
   }
   ignores.forEach((ex) => {
-    find += ` -not -path "*/${ex}/*" -not -path "*/${ex}"`;
+    const isDirectory = ex.endsWith('/');
+    if (isDirectory) {
+      const dirPath = ex.slice(0, -1);
+      find += ` -not -path "*/${dirPath}/*" -not -path "*/${dirPath}"`;
+    } else {
+      find += ` -not -path "*/${ex}"`;
+    }
   });
   find += ' -exec grep -E \'TODO|HACK|FIXME\' {} \\;';
   let output;
