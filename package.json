@@ -8,8 +8,7 @@
     "build": "ncc build src/index.js -o dist --license licenses.txt",
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
     "test:mocha": "mocha --config .mocharc.json test/*-test.js",
-    "test:gen-cov": "nyc --reporter=lcov npm run test:mocha",
-    "test": "npm run lint && nyc npm run test:mocha"
+    "test": "npm run lint && c8 npm run test:mocha"
   },
   "repository": {
     "type": "git",
@@ -39,6 +38,7 @@
   },
   "devDependencies": {
     "@vercel/ncc": "^0.38.1",
+    "c8": "^9.1.0",
     "chai": "^4.3.10",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -46,7 +46,6 @@
     "eslint-plugin-jsdoc": "^48.2.3",
     "eslint-plugin-node": "^11.1.0",
     "mocha": "^10.4.0",
-    "nyc": "^15.1.0",
     "sinon": "^17.0.1"
   }
 }

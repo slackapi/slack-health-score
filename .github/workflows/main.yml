@@ -13,10 +13,9 @@ jobs:
     - uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.sha }}
-    - run: npm ci
+    - run: npm install
     - run: npm run build
     - run: npm test
-    - run: npm run test:gen-cov
     - name: Upload coverage to CodeCov
       uses: codecov/codecov-action@v4.0.1
       with:
