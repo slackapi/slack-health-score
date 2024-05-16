@@ -42,30 +42,44 @@ Two important notes about the API tokens this action relies on:
 ```yaml
 - uses: slackapi/slack-health-score@v0
   with:
-    # The file extension to inspect as part of health score calculation. For example, 'js' or 'go'
+    # The file extension to inspect as part of health score calculation. For example, 'js'
+    # or 'go'
     # This input is required.
     extension: ''
 
-    # A GitHub access token with permissions to write GitHub Checks. Recommended to set this to `${{ secrets.GITHUB_TOKEN }}` in a workflow `job` that has `checks: write` permissions. See the full `job` example at the beginning of this README.
+    # A GitHub access token with permissions to write GitHub Checks. Recommended to set
+    # this to `${{ secrets.GITHUB_TOKEN }}` in a workflow `job` that has `checks: write`
+    # permissions. See the full `job` example at the beginning of this README.
     # This input is required.
     github_token: ''
 
-    # Only parse the specified files and directories (recursively). Defaults to `.`. E.g. "src"
+    # Only parse the specified files and directories (recursively). Defaults to `.`.
+    # E.g. "src"
     include: ''
 
-    # Ignore the specified files and directories. Essentially a direct argument into `find` `-not -path "{arg}"`. Defaults to contents of `.gitignore`. E.g. "node_modules"
+    # Ignore the specified files and directories. Essentially a direct argument into
+    # `find` `-not -path "{arg}"`. Defaults to contents of `.gitignore`.
+    # E.g. "node_modules"
     exclude: ''
 
-    # A CodeCov API access token with read permissions to the repo. This _cannot_ be a CodeCov "Global Upload" token - it _must_ be a human user API access token. Setting this will try to pull coverage information for the repo from CodeCov to include in health score calculation; not setting it will exclude code coverage from health score calcuation.
+    # A CodeCov API access token with read permissions to the repo. This _cannot_ be
+    # a CodeCov "Global Upload" token - it _must_ be a human user API access token.
+    # Setting this will try to pull coverage information for the repo from CodeCov to
+    # include in health score calculation; not setting it will exclude code coverage
+    # from health score calculation.
     codecov_token: ''
 
-    # Maximum number of times to try retrieving code coverage information from codecov. Defaults to 10.
+    # Maximum number of times to try retrieving code coverage information from codecov.
+    # Defaults to 10.
     codecov_max_attempts: ''
 
-    # Number of milliseconds to wait when retrying retrieving code coverage information from codecov. Defaults to 10000 (10 seconds).
+    # Number of milliseconds to wait when retrying retrieving code coverage information
+    # from codecov. Defaults to 10000 (10 seconds).
     codecov_retry_delay: ''
 
-    # If retrieving code coverage from CodeCov times out (according to the configuration set up via the `codecov_max_attempts` and `codecov_retry_delay` inputs), should that cause this action to error out. Defaults to false.
+    # If retrieving code coverage from CodeCov times out (according to the configuration
+    # set up via the `codecov_max_attempts` and `codecov_retry_delay` inputs), should that
+    # cause this action to error out. Defaults to false.
     codecov_treat_timeout_as_error: ''
 ```
 
