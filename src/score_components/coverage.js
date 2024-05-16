@@ -10,7 +10,7 @@ const getSHA = require('../get-sha');
 module.exports = async function retrieveCodeCoverage(core, github) {
   // See if we can get a coverage overview for this commit from codecov
   const codecovToken = core.getInput('codecov_token');
-  const maxAttempts = parseInt(core.getInput('max_attempts'), 10) || 10;
+  const maxAttempts = parseInt(core.getInput('max_attempts'), 10) > 0 ? parseInt(core.getInput('max_attempts'), 10) : 10;
   const retryDelay = parseInt(core.getInput('retry_delay'), 10) || 10000;
   const treatTimeoutAsError = core.getInput('treat_timeout_as_error') === 'true';
 
@@ -21,7 +21,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
     const ctx = github.context;
     codecov.auth(codecovToken);
     const sha = getSHA(core, github);
-    while (attempts < 10) {
+    while (attempts <= maxAttempts) {
       try {
         core.info('Pinging codecov API for coverage data...');
         const coverage = await codecov.repos_commits_retrieve({
@@ -57,8 +57,9 @@ module.exports = async function retrieveCodeCoverage(core, github) {
     if (attempts > maxAttempts) {
       const message = `Reached maximum attempts (${maxAttempts}) without retrieving coverage data.`;
       if (treatTimeoutAsError) {
-        core.setFailed(message);
-      } else {
+        core.error(message);
+      }
+      else {
         core.warning(message);
       }
     }
