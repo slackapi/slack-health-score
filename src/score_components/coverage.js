@@ -10,9 +10,9 @@ const getSHA = require('../get-sha');
 module.exports = async function retrieveCodeCoverage(core, github) {
   // See if we can get a coverage overview for this commit from codecov
   const codecovToken = core.getInput('codecov_token');
-  const maxAttempts = parseInt(core.getInput('max_attempts'), 10) > 0 ? parseInt(core.getInput('max_attempts'), 10) : 10;
-  const retryDelay = parseInt(core.getInput('retry_delay'), 10) || 10000;
-  const treatTimeoutAsError = core.getInput('treat_timeout_as_error') === 'true';
+  const maxAttempts = parseInt(core.getInput('codecov_max_attempts'), 10) > 0 ? parseInt(core.getInput('codecov_max_attempts'), 10) : 10;
+  const retryDelay = parseInt(core.getInput('codecov_retry_delay'), 10) || 10000;
+  const treatTimeoutAsError = core.getInput('codecov_treat_timeout_as_error') === 'true';
 
   let misses = 0;
   let attempts = 1;

@@ -2,19 +2,28 @@ name: 'slack-health-score'
 description: 'Report some code quality heuristics as defined by Slack Engineering'
 inputs:
   extension:
-    description: 'File extension of files to filter on to search for problematic comments. E.g. "js" or "go"'
+    description: 'File extension of files to filter on to report health score on. E.g. "js" or "go"'
     required: true
   github_token:
-    description: 'A GitHub access token with permissions to write commit statuses. Recommended to set this to `secrets.GITHUB_TOKEN`.'
+    description: 'A GitHub access token with permissions to write GitHub Checks. Recommended to set this to `secrets.GITHUB_TOKEN` in combination with using in a workflow `job` that has `checks: write` permissions.'
     required: true
-  codecov_token:
-    description: 'A CodeCov access token with read permissions to the repo. Setting this will try to pull coverage information for the repo from CodeCov to include in health score calculation.'
-    required: false
   include:
-    description: 'Only parse the specified files and directories (recursively). Ideally supports glob syntax? Defaults to contents of `.`. E.g. "src"'
+    description: 'Only parse the specified files and directories (recursively). Defaults to `.`. E.g. "src"'
     required: false
   exclude:
     description: 'Ignore the specified files and directories. Essentially a direct argument into `find` `-not -path "{arg}"`. Defaults to contents of `.gitignore`. E.g. "node_modules"'
+    required: false
+  codecov_token:
+    description: 'A CodeCov API access token with read permissions to the repo. This _cannot_ be a CodeCov "Global Upload" token - it _must_ be a human user API access token. Setting this will try to pull coverage information for the repo from CodeCov to include in health score calculation; not setting it will exclude code coverage from health score calcuation.'
+    required: false
+  codecov_max_attempts:
+    description: 'Maximum number of times to try retrieving code coverage information from codecov. Defaults to 10.'
+    required: false
+  codecov_retry_delay:
+    description: 'Number of milliseconds to wait when retrying retrieving code coverage information from codecov. Defaults to 10000 (10 seconds).'
+    required: false
+  codecov_treat_timeout_as_error:
+    description: 'If retrieving code coverage from CodeCov times out (according to the configuration set up via the `codecov_max_attempts` and `codecov_retry_delay` inputs), should that cause this action to error out. Defaults to false.'
     required: false
 # outputs:
 runs:
