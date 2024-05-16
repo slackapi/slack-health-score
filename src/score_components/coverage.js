@@ -58,8 +58,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
       const message = `Reached maximum attempts (${maxAttempts}) without retrieving coverage data.`;
       if (treatTimeoutAsError) {
         core.error(message);
-      }
-      else {
+      } else {
         core.warning(message);
       }
     }
