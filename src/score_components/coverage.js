@@ -1,8 +1,6 @@
 const codecov = require('@api/codecov');
 const getSHA = require('../get-sha');
 
-const RETRY_DELAY = 10000;
-
 /**
  * @description Compiles the health score components
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
@@ -12,6 +10,10 @@ const RETRY_DELAY = 10000;
 module.exports = async function retrieveCodeCoverage(core, github) {
   // See if we can get a coverage overview for this commit from codecov
   const codecovToken = core.getInput('codecov_token');
+  const maxAttempts = parseInt(core.getInput('max_attempts'), 10) > 0 ? parseInt(core.getInput('max_attempts'), 10) : 10;
+  const retryDelay = parseInt(core.getInput('retry_delay'), 10) || 10000;
+  const treatTimeoutAsError = core.getInput('treat_timeout_as_error') === 'true';
+
   let misses = 0;
   let attempts = 1;
 
@@ -19,7 +21,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
     const ctx = github.context;
     codecov.auth(codecovToken);
     const sha = getSHA(core, github);
-    while (attempts < 10) {
+    while (attempts <= maxAttempts) {
       try {
         core.info('Pinging codecov API for coverage data...');
         const coverage = await codecov.repos_commits_retrieve({
@@ -38,13 +40,13 @@ module.exports = async function retrieveCodeCoverage(core, github) {
             core.info('codecov response data present but missing totals, delaying');
             // if totals are missing, probably codecov has not compiled the coverage info yet; delay and try again.
             attempts += 1;
-            await sleep(RETRY_DELAY);
+            await sleep(retryDelay);
           }
         } else {
           core.info('codecov response data missing, delaying');
           // if totals are missing, probably codecov has not compiled the coverage info yet; delay and try again.
           attempts += 1;
-          await sleep(RETRY_DELAY);
+          await sleep(retryDelay);
         }
       } catch (e) {
         core.error('Failed to retrieve codecov commits');
@@ -52,6 +54,16 @@ module.exports = async function retrieveCodeCoverage(core, github) {
         break;
       }
     }
+    if (attempts > maxAttempts) {
+      const message = `Reached maximum attempts (${maxAttempts}) without retrieving coverage data.`;
+      if (treatTimeoutAsError) {
+        core.error(message);
+      } else {
+        core.warning(message);
+      }
+    }
+  } else {
+    core.info('No codecov token provided, skipping coverage retrieval.');
   }
   return misses;
 };

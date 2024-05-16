@@ -29,3 +29,6 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         extension: js
         include: src
+        max_attempts: 10
+        retry_delay: 10000
+        treat_timeout_as_error: true
