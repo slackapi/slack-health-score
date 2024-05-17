@@ -11,10 +11,13 @@ module.exports = {
    */
   compile: async function compileScore(core, github) {
     // TODO: wire up action outputs
+    const extension = core.getInput('extension');
+    const includeInput = core.getInput('include');
+    const includes = includeInput ? includeInput.split(',').map((i) => i.trim()) : ['.'];
     return {
       // TODO: support src as arrays
       // TODO: wire up exclude input
-      comments: module.exports.grep(core.getInput('extension'), [core.getInput('include') || '.'], []), // to-do et al comments
+      comments: module.exports.grep(extension, includes, []), // to-do et al comments
       coverageMisses: await module.exports.coverage(core, github), // uncovered LoC
     };
   },

@@ -34,6 +34,7 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
     output = child_process.execSync(find).toString().trim();
   } catch (e) {
     // TODO: handle error
+    output = ''; // temporary fix to avoid undefined
   }
   return output.split('\n').filter(Boolean);
 };
