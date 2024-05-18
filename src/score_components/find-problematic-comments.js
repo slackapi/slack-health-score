@@ -28,12 +28,24 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
       find += ` -not -path "*/${ex}"`;
     }
   });
-  find += ' -exec grep -E \'TODO|HACK|FIXME\' {} \\;';
+  const commentPattern = '\\s*(//|/\\*|\\*).*\\b(TODO|HACK|FIXME)\\b';
+
+  // Modify the grep command to search within comments only
+  find += ` -exec sh -c 'grep -EHn "${commentPattern}" "$0"' {} \\;`;
   let output;
   try {
     output = child_process.execSync(find).toString().trim();
   } catch (e) {
     // TODO: handle error
+    output = ''; // temporary fix to avoid undefined
   }
-  return output.split('\n').filter(Boolean);
+  const result = output.split('\n').filter(Boolean).map((line) => {
+    const [path, lineNo, type, commentData] = line.split(':');
+    if (type) type.trim();
+    if (commentData) commentData.trim();
+    const comment = (commentData == null) ? type : (`${type}:${commentData}`).trim();
+    return { path, line_no: parseInt(lineNo, 10), comment };
+  });
+  // console.log(result);
+  return result;
 };

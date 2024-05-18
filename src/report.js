@@ -35,14 +35,20 @@ module.exports = async function reportStatus(startTime, core, github, score) {
 
 Each problematic comment (i.e. comments with TODO, HACK or FIXME in it) contributes -${PROBLEMATIC_COMMENT_PENALTY} points to the health score.
 
-${score.comments.map((c) => `- \`${c.trim()}\``).join('\n')}\n`;
+${score.comments.map((c) => `- \`${c.comment}\``).join('\n')}\n`;
   }
   if (score.coverageMisses) {
     details += `\n## Code Coverage
 
 According to [the code coverage for this project](https://app.codecov.io/gh/${ctx.repo.owner}/${ctx.repo.repo}), there are ${score.coverageMisses} uncovered lines of code. Each uncovered line of code contributes -${UNCOVERED_LINE_PENALTY} to the health score.`;
   }
-
+  const annotations = score.comments.map((c) => ({
+    path: c.path,
+    start_line: c.line_no ? c.line_no : 1,
+    end_line: c.line_no ? c.line_no : 1,
+    annotation_level: 'warning',
+    message: 'Problematic comment identified',
+  }));
   // TODO: handle API call erroring out
   await octokit.rest.checks.create({
     name: 'Health Score',
@@ -57,6 +63,7 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
       title: `${points}`,
       summary: `${points} health score points`,
       text: details,
+      annotations,
     },
   });
   return points;
