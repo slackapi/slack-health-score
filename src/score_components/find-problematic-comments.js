@@ -10,7 +10,10 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
   } else {
     find += ' .';
   }
-  find += ` -name "*.${ext}"`;
+
+  const conditions = ext.map((ex) => `-name "*.${ex}"`).join(' -o ');
+  if (conditions) find += ` \\( ${conditions} \\) `;
+
   let ignores = [];
   if (exclude && exclude.length) {
     ignores = exclude;
@@ -29,6 +32,7 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
     }
   });
   find += ' -exec grep -E \'TODO|HACK|FIXME\' {} \\;';
+  console.log(find);
   let output;
   try {
     output = child_process.execSync(find).toString().trim();
