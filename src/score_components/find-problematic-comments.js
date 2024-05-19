@@ -32,7 +32,6 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
     }
   });
   find += ' -exec grep -E \'TODO|HACK|FIXME\' {} \\;';
-  console.log(find);
   let output;
   try {
     output = child_process.execSync(find).toString().trim();
