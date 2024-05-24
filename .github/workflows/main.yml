@@ -32,6 +32,10 @@ jobs:
     steps:
       - name: Setup repo
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: npm install
+      - run: npm run build
       - name: Yo dawg I heard you like healthscores so I healthscored your healthscore so you can healthscore while you healthscore
         uses: ./
         with:
@@ -39,6 +43,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           extension: js
           include: src
-          max_attempts: 10
-          retry_delay: 10000
-          treat_timeout_as_error: true
+          codecov_max_attempts: 10
+          codecov_retry_delay: 10000
+          codecov_treat_timeout_as_error: true
