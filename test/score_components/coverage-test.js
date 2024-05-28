@@ -1,14 +1,9 @@
 const { assert } = require('chai');
 const sinon = require('sinon');
-const core = require('@actions/core');
-const github = require('@actions/github');
-const codecov = require('@api/codecov');
+const { fakeCore, fakeGithub, fakeCodecov } = require('../stubs/stubs');
 const cov = require('../../src/score_components/coverage');
 
 describe('score component: code coverage', () => {
-  const fakeCore = sinon.stub(core);
-  const fakeGithub = sinon.stub(github);
-  const fakeCodecov = sinon.stub(codecov);
   const originalGithubContext = fakeGithub.context;
   beforeEach(() => {
     sinon.reset();

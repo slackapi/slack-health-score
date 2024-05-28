@@ -43,7 +43,7 @@ Two important notes about the API tokens this action relies on:
 - uses: slackapi/slack-health-score@v0
   with:
     # The file extension to inspect as part of health score calculation. For example, 'js'
-    # or 'go'
+    # or 'go' These conditions are logically OR'ed together using -o (OR) in the find command.
     # This input is required.
     extension: ''
 

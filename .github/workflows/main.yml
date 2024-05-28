@@ -10,25 +10,39 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-    - run: npm install
-    - run: npm run build
-    - run: npm test
-    - name: Upload coverage to CodeCov
-      uses: codecov/codecov-action@v4.0.1
-      with:
-        directory: ./coverage
-        token: ${{ secrets.CODECOV_TOKEN }}
-        slug: slackapi/slack-health-score
-    - name: Yo dawg I heard you like healthscores so I healthscored your healthscore so you can healthscore while you healthscore
-      uses: ./
-      with:
-        codecov_token: ${{ secrets.FILS_CODECOV_API_TOKEN }}
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        extension: js
-        include: src
-        max_attempts: 10
-        retry_delay: 10000
-        treat_timeout_as_error: true
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: npm install
+      - run: npm run build
+      - run: npm test
+      - name: Upload coverage to CodeCov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          directory: ./coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: slackapi/slack-health-score
+
+  health-score:
+    needs: unit_tests
+    permissions:
+      checks: write
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - run: npm install
+      - run: npm run build
+      - name: Yo dawg I heard you like healthscores so I healthscored your healthscore so you can healthscore while you healthscore
+        uses: ./
+        with:
+          codecov_token: ${{ secrets.FILS_CODECOV_API_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          extension: js
+          include: src
+          codecov_max_attempts: 10
+          codecov_retry_delay: 10000
+          codecov_treat_timeout_as_error: true
