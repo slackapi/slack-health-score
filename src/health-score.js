@@ -1,6 +1,7 @@
 const findProblematicComments = require('./score_components/find-problematic-comments');
 const retrieveCodeCoverage = require('./score_components/coverage');
 const reportStatus = require('./report');
+const ap = require('./helpers/array-parser');
 
 module.exports = {
   /**
@@ -11,11 +12,24 @@ module.exports = {
    */
   compile: async function compileScore(core, github) {
     // TODO: wire up action outputs
+    const extensionInput = core.getInput('extension');
+    const includeInput = core.getInput('include');
+    const excludeInput = core.getInput('exclude');
+
+    const extensions = ap.parseYamlArray(extensionInput);
+    const includes = ap.parseYamlArray(includeInput);
+    const excludes = ap.parseYamlArray(excludeInput);
+
+    let com = '';
+    const misses = await module.exports.coverage(core, github); // uncovered LoC
+    if (extensions.length === 0) {
+      core.error('Extensions not specified');
+    } else {
+      if (includes.length === 0) core.warning('Directories to be included not specified');
+      com = module.exports.grep(extensions, includes, excludes); // to-do et al comments
+    }
     return {
-      // TODO: support src as arrays
-      // TODO: wire up exclude input
-      comments: module.exports.grep(core.getInput('extension'), [core.getInput('include') || '.'], []), // to-do et al comments
-      coverageMisses: await module.exports.coverage(core, github), // uncovered LoC
+      comments: com, coverageMisses: misses,
     };
   },
   grep: findProblematicComments,

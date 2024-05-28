@@ -10,7 +10,10 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
   } else {
     find += ' .';
   }
-  find += ` -name "*.${ext}"`;
+
+  const conditions = ext.map((ex) => `-name "*.${ex}"`).join(' -o ');
+  if (conditions) find += ` \\( ${conditions} \\) `;
+
   let ignores = [];
   if (exclude && exclude.length) {
     ignores = exclude;
@@ -34,6 +37,7 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
     output = child_process.execSync(find).toString().trim();
   } catch (e) {
     // TODO: handle error
+    output = ''; // temporary fix to avoid undefined
   }
   return output.split('\n').filter(Boolean);
 };
