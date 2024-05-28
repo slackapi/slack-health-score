@@ -26,18 +26,23 @@ describe('health-score', () => {
     assert.ok(hs.grep);
   });
   describe('check: inputs', () => {
-    it('should handle invalid input', async () => {
-      fakeCore.getInput.withArgs('extension').returns('');
-      fakeCore.getInput.withArgs('include').returns(null);
-      fakeCore.getInput.withArgs('exclude').returns('');
-      fakeGithub.context = contextValue;
-      fakeComments.onCall().returns(['']);
-      fakeCoverage.onCall().returns(0);
-
-      await hs.compile(fakeCore, fakeGithub);
-
-      assert(fakeComments.calledWith([], [], []));
-      assert(fakeCoverage.calledWith(fakeCore, fakeGithub));
+    describe('should call actions/core.error for invalid input', async () => {
+      it('should check for empty includes', async () => {
+        fakeCore.getInput.withArgs('extension').returns('js');
+        fakeCore.getInput.withArgs('include').returns(null);
+        fakeCore.getInput.withArgs('exclude').returns('test');
+        fakeGithub.context = contextValue;
+        await hs.compile(fakeCore, fakeGithub);
+        assert(fakeCore.warning.calledWith(sinon.match('Directories to be included not specified')));
+      });
+      it('should check for invalid extensions', async () => {
+        fakeCore.getInput.withArgs('extension').returns('');
+        fakeCore.getInput.withArgs('include').returns('src');
+        fakeCore.getInput.withArgs('exclude').returns(null);
+        fakeGithub.context = contextValue;
+        await hs.compile(fakeCore, fakeGithub);
+        assert(fakeCore.error.calledWith(sinon.match('Extensions not specified')));
+      });
     });
     it('should take single input', async () => {
       fakeCore.getInput.withArgs('extension').returns('js');
