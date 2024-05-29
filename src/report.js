@@ -63,6 +63,7 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
       },
     });
   } catch (e) {
+    core.error(e);
     core.error('Octokit checks creation call failed');
   }
   return points;

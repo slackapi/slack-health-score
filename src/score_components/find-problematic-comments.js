@@ -39,6 +39,7 @@ module.exports = function grepForProblematicComments(core, ext, include, exclude
   try {
     output = child_process.execSync(find).toString().trim();
   } catch (e) {
+    core.error(e);
     core.error('child_process execSync failed to execute');
   }
   const result = output.split('\n').filter(Boolean).map((line) => {
