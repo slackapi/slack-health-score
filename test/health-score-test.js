@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 const sinon = require('sinon');
-const { fakeCore, fakeGithub } = require('./stubs/stubs');
+const { fakeCore, fakeGithub, fakeComments, fakeCoverage } = require('./stubs/stubs');
 const hs = require('../src/health-score');
 
 const contextValue = {
@@ -15,8 +15,6 @@ const contextValue = {
 };
 
 describe('health-score', () => {
-  const fakeComments = sinon.stub(hs, 'grep');
-  const fakeCoverage = sinon.stub(hs, 'coverage');
   const originalGithubContext = fakeGithub.context;
   beforeEach(() => {
     sinon.reset();
@@ -54,7 +52,7 @@ describe('health-score', () => {
 
       await hs.compile(fakeCore, fakeGithub);
 
-      assert(fakeComments.calledWith(['js'], ['src'], ['test']));
+      assert(fakeComments.calledWith(fakeCore, ['js'], ['src'], ['test']));
       assert(fakeCoverage.calledWith(fakeCore, fakeGithub));
     });
 
@@ -68,7 +66,7 @@ describe('health-score', () => {
 
       await hs.compile(fakeCore, fakeGithub);
 
-      assert(fakeComments.calledWith(['js', 'ts'], ['src', 'lib'], ['test', 'dist']));
+      assert(fakeComments.calledWith(fakeCore, ['js', 'ts'], ['src', 'lib'], ['test', 'dist']));
       assert(fakeCoverage.calledWith(fakeCore, fakeGithub));
     });
 
@@ -82,7 +80,7 @@ describe('health-score', () => {
 
       await hs.compile(fakeCore, fakeGithub);
 
-      assert(fakeComments.calledWith(['js', 'ts'], ['src', 'lib'], ['test', 'dist']));
+      assert(fakeComments.calledWith(fakeCore, ['js', 'ts'], ['src', 'lib'], ['test', 'dist']));
       assert(fakeCoverage.calledWith(fakeCore, fakeGithub));
     });
     it('should handle combined and unformatted inputs', async () => {
@@ -95,8 +93,32 @@ describe('health-score', () => {
 
       await hs.compile(fakeCore, fakeGithub);
 
-      assert(fakeComments.calledWith(['js', 'ts'], ['src', 'lib'], ['test', 'dist']));
+      assert(fakeComments.calledWith(fakeCore, ['js', 'ts'], ['src', 'lib'], ['test', 'dist']));
       assert(fakeCoverage.calledWith(fakeCore, fakeGithub));
+    });
+  });
+  it('should have a report function', async () => {
+    assert.ok(hs.report);
+  });
+  describe('check: report', () => {
+    it('should handle invalid github token', async () => {
+      fakeCore.getInput.withArgs('github_token').returns(null);
+      fakeGithub.context = contextValue;
+      const score = { comments: [], coverageMisses: 0 };
+      const startTime = new Date();
+      const points = await hs.report(startTime, fakeCore, fakeGithub, score);
+      assert(
+        fakeCore.warning.calledWith(sinon.match('No GitHub token found; will not report score on commit status.')),
+      );
+      assert.deepEqual(points, 0);
+    });
+    it('should calculate points accurately', async () => {
+      fakeCore.getInput.withArgs('github_token').returns('test');
+      fakeGithub.context = contextValue;
+      const score = { comments: [{ path: 'path', line_no: 10, comment: '// TODO: random stuff' }, { path: 'path2', line_no: 15, comment: '// FIXME: random stuff' }], coverageMisses: 5 };
+      const startTime = new Date();
+      const points = await hs.report(startTime, fakeCore, fakeGithub, score);
+      assert.deepEqual(points, -205);
     });
   });
 });

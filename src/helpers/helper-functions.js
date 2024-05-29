@@ -21,4 +21,18 @@ module.exports = {
         return item;
       });
   },
+  /**
+  *
+  * @param comments
+  * @returns []
+  */
+  getAnnotations(comments) {
+    return comments.map((c) => ({
+      path: c.path,
+      start_line: c.line_no ? c.line_no : 1,
+      end_line: c.line_no ? c.line_no : 1,
+      annotation_level: 'warning',
+      message: 'Problematic comment identified',
+    }));
+  },
 };

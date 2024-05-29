@@ -1,7 +1,7 @@
 const findProblematicComments = require('./score_components/find-problematic-comments');
 const retrieveCodeCoverage = require('./score_components/coverage');
 const reportStatus = require('./report');
-const ap = require('./helpers/array-parser');
+const { parseYamlArray } = require('./helpers/helper-functions');
 
 module.exports = {
   /**
@@ -16,9 +16,9 @@ module.exports = {
     const includeInput = core.getInput('include');
     const excludeInput = core.getInput('exclude');
 
-    const extensions = ap.parseYamlArray(extensionInput);
-    const includes = ap.parseYamlArray(includeInput);
-    const excludes = ap.parseYamlArray(excludeInput);
+    const extensions = parseYamlArray(extensionInput);
+    const includes = parseYamlArray(includeInput);
+    const excludes = parseYamlArray(excludeInput);
 
     let com = '';
     const misses = await module.exports.coverage(core, github); // uncovered LoC
@@ -26,7 +26,7 @@ module.exports = {
       core.error('Extensions not specified');
     } else {
       if (includes.length === 0) core.warning('Directories to be included not specified');
-      com = module.exports.grep(extensions, includes, excludes); // to-do et al comments
+      com = module.exports.grep(core, extensions, includes, excludes); // to-do et al comments
     }
     return {
       comments: com, coverageMisses: misses,

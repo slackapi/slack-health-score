@@ -1,7 +1,7 @@
 const fs = require('fs');
 const child_process = require('child_process');
 
-module.exports = function grepForProblematicComments(ext, include, exclude) {
+module.exports = function grepForProblematicComments(core, ext, include, exclude) {
   let find = 'find';
   if (include && include.length) {
     include.forEach((i) => {
@@ -35,20 +35,18 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
 
   // Modify the grep command to search within comments only
   find += ` -exec sh -c 'grep -EHn "${commentPattern}" "$0"' {} \\;`;
-  let output;
+  let output = '';
   try {
     output = child_process.execSync(find).toString().trim();
   } catch (e) {
-    // TODO: handle error
-    output = ''; // temporary fix to avoid undefined
+    core.error('child_process execSync failed to execute');
   }
   const result = output.split('\n').filter(Boolean).map((line) => {
     const [path, lineNo, type, commentData] = line.split(':');
     if (type) type.trim();
     if (commentData) commentData.trim();
-    const comment = (commentData == null) ? type : (`${type}:${commentData}`).trim();
-    return { path, line_no: parseInt(lineNo, 10), comment };
+    const comment = (commentData == null) ? type.trim() : (`${type.trim()}: ${commentData.trim()}`).trim();
+    return { path: path.trim(), line_no: parseInt(lineNo, 10), comment };
   });
-  // console.log(result);
   return result;
 };

@@ -1,4 +1,5 @@
 const getSHA = require('./get-sha');
+const { getAnnotations } = require('./helpers/helper-functions');
 
 const UNCOVERED_LINE_PENALTY = 1;
 const PROBLEMATIC_COMMENT_PENALTY = 100;
@@ -42,29 +43,27 @@ ${score.comments.map((c) => `- \`${c.comment}\``).join('\n')}\n`;
 
 According to [the code coverage for this project](https://app.codecov.io/gh/${ctx.repo.owner}/${ctx.repo.repo}), there are ${score.coverageMisses} uncovered lines of code. Each uncovered line of code contributes -${UNCOVERED_LINE_PENALTY} to the health score.`;
   }
-  const annotations = score.comments.map((c) => ({
-    path: c.path,
-    start_line: c.line_no ? c.line_no : 1,
-    end_line: c.line_no ? c.line_no : 1,
-    annotation_level: 'warning',
-    message: 'Problematic comment identified',
-  }));
+  const annotations = getAnnotations(score.comments);
   // TODO: handle API call erroring out
-  await octokit.rest.checks.create({
-    name: 'Health Score',
-    owner: ctx.repo.owner,
-    repo: ctx.repo.repo,
-    head_sha: getSHA(core, github),
-    status: 'completed',
-    conclusion: 'neutral',
-    completed_at: new Date().toISOString(),
-    started_at: startTime.toISOString(),
-    output: {
-      title: `${points}`,
-      summary: `${points} health score points`,
-      text: details,
-      annotations,
-    },
-  });
+  try {
+    await octokit.rest.checks.create({
+      name: 'Health Score',
+      owner: ctx.repo.owner,
+      repo: ctx.repo.repo,
+      head_sha: getSHA(core, github),
+      status: 'completed',
+      conclusion: 'neutral',
+      completed_at: new Date().toISOString(),
+      started_at: startTime.toISOString(),
+      output: {
+        title: `${points}`,
+        summary: `${points} health score points`,
+        text: details,
+        annotations,
+      },
+    });
+  } catch (e) {
+    core.error('Octokit checks creation call failed');
+  }
   return points;
 };
