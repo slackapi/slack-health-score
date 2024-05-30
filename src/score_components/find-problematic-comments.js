@@ -1,7 +1,7 @@
 const fs = require('fs');
 const child_process = require('child_process');
 
-module.exports = function grepForProblematicComments(ext, include, exclude) {
+module.exports = function grepForProblematicComments(core, ext, include, exclude) {
   let find = 'find';
   if (include && include.length) {
     include.forEach((i) => {
@@ -31,13 +31,24 @@ module.exports = function grepForProblematicComments(ext, include, exclude) {
       find += ` -not -path "*/${ex}"`;
     }
   });
-  find += ' -exec grep -E \'TODO|HACK|FIXME\' {} \\;';
-  let output;
+  const commentPattern = '\\s*(//|/\\*|\\*).*\\b(TODO|HACK|FIXME)\\b';
+
+  // Modify the grep command to search within comments only
+  find += ` -exec sh -c 'grep -EHn "${commentPattern}" "$0"' {} \\;`;
+  let output = '';
   try {
     output = child_process.execSync(find).toString().trim();
   } catch (e) {
-    // TODO: handle error
-    output = ''; // temporary fix to avoid undefined
+    core.error(e);
+    core.error('child_process execSync failed to execute');
   }
-  return output.split('\n').filter(Boolean);
+  const result = output.split('\n').filter(Boolean).map((line) => {
+    const [path, lineNo, type, commentData] = line.split(':');
+    if (type) type.trim();
+    if (commentData) commentData.trim();
+    const comment = (commentData == null) ? type.trim() : (`${type.trim()}: ${commentData.trim()}`).trim();
+    const commentType = (commentData == null) ? null : type.split('//')[1].trim();
+    return { path: path.trim(), line_no: parseInt(lineNo, 10), comment, commentType };
+  });
+  return result;
 };
