@@ -1,9 +1,9 @@
 module.exports = {
   /**
-  *
-  * @param input
-  * @returns []
-  */
+   *
+   * @param input
+   * @returns []
+   */
   parseYamlArray(input) {
     if (!input) {
       return [];
@@ -22,17 +22,17 @@ module.exports = {
       });
   },
   /**
-  *
-  * @param comments
-  * @returns []
-  */
+   *
+   * @param comments
+   * @returns []
+   */
   getAnnotations(comments) {
     return comments.map((c) => ({
       path: c.path,
       start_line: c.line_no ? c.line_no : 1,
       end_line: c.line_no ? c.line_no : 1,
       annotation_level: 'warning',
-      message: 'Problematic comment identified',
+      message: c.commentType ? (`Problematic comment ("${c.commentType}") identified`) : ('Problematic comment ("TODO", "HACK", "FIXME") identified'),
     }));
   },
 };

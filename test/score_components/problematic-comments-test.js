@@ -65,17 +65,17 @@ describe('score component: problematic comments', () => {
     it('should handle grep results', async () => {
       fakeChildProcess.execSync.returns('path:10: // TODO: random stuff');
       const score = { comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []), coverageMisses: 0 };
-      assert.deepEqual(score.comments, [{ path: 'path', line_no: 10, comment: '// TODO: random stuff' }]);
+      assert.deepEqual(score.comments, [{ path: 'path', line_no: 10, comment: '// TODO: random stuff', commentType: 'TODO' }]);
     });
     it('should handle multiple grep results', async () => {
       fakeChildProcess.execSync.returns('path:10: // TODO: random stuff \n path2:15: // FIXME: random stuff');
       const score = { comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []), coverageMisses: 0 };
-      assert.deepEqual(score.comments, [{ path: 'path', line_no: 10, comment: '// TODO: random stuff' }, { path: 'path2', line_no: 15, comment: '// FIXME: random stuff' }]);
+      assert.deepEqual(score.comments, [{ path: 'path', line_no: 10, comment: '// TODO: random stuff', commentType: 'TODO' }, { path: 'path2', line_no: 15, comment: '// FIXME: random stuff', commentType: 'FIXME' }]);
     });
     it('should handle grep results not in the correct format', async () => {
       fakeChildProcess.execSync.returns('path:10: // TODO: random stuff \n path2:15: // random things TODO');
       const score = { comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []), coverageMisses: 0 };
-      assert.deepEqual(score.comments, [{ path: 'path', line_no: 10, comment: '// TODO: random stuff' }, { path: 'path2', line_no: 15, comment: '// random things TODO' }]);
+      assert.deepEqual(score.comments, [{ path: 'path', line_no: 10, comment: '// TODO: random stuff', commentType: 'TODO' }, { path: 'path2', line_no: 15, comment: '// random things TODO', commentType: null }]);
     });
   });
 });

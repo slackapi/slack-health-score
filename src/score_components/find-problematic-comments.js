@@ -47,7 +47,8 @@ module.exports = function grepForProblematicComments(core, ext, include, exclude
     if (type) type.trim();
     if (commentData) commentData.trim();
     const comment = (commentData == null) ? type.trim() : (`${type.trim()}: ${commentData.trim()}`).trim();
-    return { path: path.trim(), line_no: parseInt(lineNo, 10), comment };
+    const commentType = (commentData == null) ? null : type.split('//')[1].trim();
+    return { path: path.trim(), line_no: parseInt(lineNo, 10), comment, commentType };
   });
   return result;
 };
