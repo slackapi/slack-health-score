@@ -38,11 +38,13 @@ avoid accidently leaking tokens!
 * Update all references to versions in the README and in the workflow files under `example-workflows/` to refer to the latest release.
 * Run all tests using `npm test` to make sure the tests pass.
 * Commit the changes on your `main` branch.
-* Create a git tag for the new version. Should be in the format `v1.4.0`. `git tag v1.4.0`.
-* Push changes up to GitHub `git push origin main --tags`.
-* Create a GitHub Release based on the tag you just pushed up - this will trigger the publishing
-  GitHub workflow.
-* Once released, make sure to close the relevant GitHub Milestone for the version you released.
+* Create a GitHub Release:
+  - check the "Publish this Action to the GitHub Marketplace" checkbox
+  - input a manual tag in the "Choose a tag" input that matches the version in `package.json`; click the "Create a new tag" button under the input (this will not immediately create a tag, but only once you are doing creating the release)
+  - manually select the previous latest tag in the "Previous tag" dropdown, then click "Generate release notes" and review them: make sure they make sense for a consumer of the Action
+  - release title should be automaticaly populated to match the new tag name
+  - click "Publish release". This will trigger the `publish.yml` GitHub workflow, which, once complete, will also overwrite the major, minor and patch tags of this project
+* Once released, make sure to close the relevant GitHub Milestone for the version you released. Optionally, create any new milestones representing the next major/minor/patch releases, if applicable and if makes sense.
 
 ## Workflow
 
