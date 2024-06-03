@@ -46,6 +46,6 @@
     "eslint-plugin-jsdoc": "^48.2.7",
     "eslint-plugin-node": "^11.1.0",
     "mocha": "^10.4.0",
-    "sinon": "^17.0.1"
+    "sinon": "^18.0.0"
   }
 }
