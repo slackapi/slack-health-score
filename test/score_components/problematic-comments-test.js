@@ -77,5 +77,10 @@ describe('score component: problematic comments', () => {
       const score = { comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []), coverageMisses: 0 };
       assert.deepEqual(score.comments, [{ path: 'path', line_no: 10, comment: '// TODO: random stuff', commentType: 'TODO' }, { path: 'path2', line_no: 15, comment: '// random things TODO', commentType: null }]);
     });
+    it('should handle grep results that starts with code', async () => {
+      fakeChildProcess.execSync.returns('path:10: const result = "hello:world" // TODO: random stuff');
+      const score = { comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []), coverageMisses: 0 };
+      assert.deepEqual(score.comments, [{ path: 'path', line_no: 10, comment: '// TODO: random stuff', commentType: 'TODO' }]);
+    });
   });
 });
