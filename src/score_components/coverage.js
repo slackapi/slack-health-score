@@ -68,10 +68,6 @@ module.exports = async function retrieveCodeCoverage(core, github) {
   return misses;
 };
 
-/**
- *
- * @param ms
- */
 function sleep(ms) {
   return new Promise((res) => {
     setTimeout(res, ms);
