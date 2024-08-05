@@ -50,8 +50,12 @@ module.exports = function grepForProblematicComments(core, ext, include, exclude
   }
   const result = output.split('\n').filter(Boolean).map((line) => {
     // example line output = "./src/report.js:47:  // TODO: handle API call erroring out"
-    const [path, lineNo, ...lineData] = line.split(':');
-    const commentData = lineData.join(':').split('//')[1];
+    const [path, lineNo, ...data] = line.split(':');
+
+    const lineData = data.join(':');
+    const [_code, ...rawCommentData] = lineData.split('//');
+
+    const commentData = rawCommentData.join('//');
     const commentType = getCommentType(commentData);
 
     return { path: path.trim(), line_no: parseInt(lineNo, 10), comment: `//${commentData}`.trim(), commentType };
