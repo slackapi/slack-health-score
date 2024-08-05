@@ -4,7 +4,7 @@
   "description": "A rough health score reporter",
   "main": "dist/index.js",
   "scripts": {
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
     "build": "ncc build src/index.js -o dist --license licenses.txt",
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
     "test:mocha": "mocha --config .mocharc.json test/*-test.js test/**/*-test.js",
