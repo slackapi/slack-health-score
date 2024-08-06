@@ -64,9 +64,9 @@ module.exports = function grepForProblematicComments(core, ext, include, exclude
 };
 
 /**
- * Returns the comment type or null 
- * @param {String} comment
- * @returns {String|null}
+ * Get the comment type.
+ * @param {string} comment
+ * @returns {string|null} comment type or null
  */
 function getCommentType(comment) {
   const cleanComment = comment.trim();
