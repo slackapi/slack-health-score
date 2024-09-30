@@ -12,7 +12,7 @@ module.exports = {
    */
   compile: async function compileScore(core, github) {
     // TODO: wire up action outputs
-    const extensionInput = core.getInpu('extension');
+    const extensionInput = core.getInput('extension');
     const includeInput = core.getInput('include');
     const excludeInput = core.getInput('exclude');
 
