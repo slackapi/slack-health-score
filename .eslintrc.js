@@ -64,6 +64,16 @@ module.exports = {
     // Allow safe references to functions before the declaration. Overrides AirBnB config. Not located in the override
     // section below because a distinct override is necessary in TypeScript files.
     'no-use-before-define': ['error', 'nofunc'],
+
+    // Allow unused variables if they start with an underscore
+    'no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      },
+    ],
   },
 
   overrides: [
