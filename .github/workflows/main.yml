@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   unit_tests:
@@ -16,6 +15,13 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - run: npm install
       - run: npm run build
+      - run: npm test
+      - name: Upload coverage to CodeCov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          directory: ./coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: slackapi/slack-health-score
 
   health-score:
     needs: unit_tests
