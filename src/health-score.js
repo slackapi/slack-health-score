@@ -8,7 +8,7 @@ module.exports = {
    * @description Compiles the health score components
    * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
    * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
-   * @returns {import('./types').HealthScore} score Health score details object
+   * @returns {Promise<import('./types').HealthScore>} score Health score details object
    */
   compile: async function compileScore(core, github) {
     // TODO: wire up action outputs
