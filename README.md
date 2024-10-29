@@ -35,7 +35,7 @@ The following is an example `job` that requires that the `test` job completes fi
 Two important notes about the API tokens this action relies on:
 
 1. The `github_token` input is used to create a status check on PRs/commits and report the health score using this GitHub API. Therefore, this token must have `checks: write` permission. As you can see in the above example workflow YAML, this is explicitly provided to the job via `permissions: checks: write`.
-2. The `codecov_token` input is used to _retrieve_ code coverage details from codecov.io. You _cannot_ use the CodeCov "Global Upload" token as it has insufficient permissions to access CodeCov's HTTP API. You _must_ use a human-generated API token for this input.
+2. The `codecov_token` input is used to _retrieve_ code coverage details from codecov.io. You _cannot_ use the CodeCov "Global Upload" token as it has insufficient permissions to access CodeCov's HTTP API. You _must_ use [a human-generated API token][codecov-token] for this input.
 
 ## Usage
 
@@ -91,3 +91,5 @@ The score is currently calculated from the following:
 
 - Problematic comments. Comments that include "TODO", "HACK" and "FIXME" tend to signal that some corners were cut and shortcuts taken, which may negatively impact the long-term health of a project.
 - Missing code coverage. While not a perfect metric, code coverage via tests is generally correlated with higher quality.
+
+[codecov-token]: https://docs.codecov.com/reference/overview
