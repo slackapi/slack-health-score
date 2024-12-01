@@ -43,7 +43,7 @@
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-jsdoc": "^50.4.3",
+    "eslint-plugin-jsdoc": "^50.6.0",
     "eslint-plugin-node": "^11.1.0",
     "mocha": "^10.8.2",
     "sinon": "^19.0.2"
