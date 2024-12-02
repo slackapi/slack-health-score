@@ -37,7 +37,7 @@
     "@api/codecov": "file:.api/apis/codecov"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.38.2",
+    "@vercel/ncc": "^0.38.3",
     "c8": "^10.1.2",
     "chai": "^4.5.0",
     "eslint": "^8.57.1",
