@@ -59,7 +59,9 @@ describe('score component: code coverage', () => {
           repo: 'slack-health-score',
         },
       };
-      fakeCodecov.repos_commits_retrieve.onCall(9).resolves({ data: { totals: { misses: 42 } } });
+      fakeCodecov.repos_commits_retrieve
+        .onCall(9)
+        .resolves({ data: { totals: { misses: 42 } } });
       const res = await cov(fakeCore, fakeGithub);
       assert.strictEqual(res, 42);
     });
@@ -79,7 +81,9 @@ describe('score component: code coverage', () => {
         },
       };
       fakeCodecov.repos_commits_retrieve.onFirstCall().resolves({ data: {} });
-      fakeCodecov.repos_commits_retrieve.onSecondCall().resolves({ data: { totals: { misses: 42 } } });
+      fakeCodecov.repos_commits_retrieve
+        .onSecondCall()
+        .resolves({ data: { totals: { misses: 42 } } });
 
       const startTime = performance.now();
       const res = await cov(fakeCore, fakeGithub);
@@ -106,18 +110,26 @@ describe('score component: code coverage', () => {
         },
       };
       fakeCodecov.repos_commits_retrieve.onFirstCall().resolves({ data: {} });
-      fakeCodecov.repos_commits_retrieve.onSecondCall().resolves({ data: { totals: { misses: 42 } } });
+      fakeCodecov.repos_commits_retrieve
+        .onSecondCall()
+        .resolves({ data: { totals: { misses: 42 } } });
 
       const res = await cov(fakeCore, fakeGithub);
       assert.equal(res, 0);
       assert.equal(fakeCodecov.repos_commits_retrieve.callCount, 1);
-      assert(fakeCore.warning.calledWithMatch(sinon.match('Reached maximum attempts')));
+      assert(
+        fakeCore.warning.calledWithMatch(
+          sinon.match('Reached maximum attempts'),
+        ),
+      );
     });
     it('should call actions/core.error if `codecov_treat_timeout_as_error` set to true and `codecov_max_attempts` exceeded', async () => {
       fakeCore.getInput.withArgs('codecov_token').returns('abcd1234');
       fakeCore.getInput.withArgs('codecov_max_attempts').returns('1');
       fakeCore.getInput.withArgs('codecov_retry_delay').returns('10');
-      fakeCore.getInput.withArgs('codecov_treat_timeout_as_error').returns('true');
+      fakeCore.getInput
+        .withArgs('codecov_treat_timeout_as_error')
+        .returns('true');
 
       fakeGithub.context = {
         eventName: 'pull_request',
@@ -130,9 +142,13 @@ describe('score component: code coverage', () => {
         },
       };
       fakeCodecov.repos_commits_retrieve.onFirstCall().resolves({ data: {} });
-      fakeCodecov.repos_commits_retrieve.onSecondCall().resolves({ data: { totals: { misses: 42 } } });
+      fakeCodecov.repos_commits_retrieve
+        .onSecondCall()
+        .resolves({ data: { totals: { misses: 42 } } });
       await cov(fakeCore, fakeGithub);
-      assert(fakeCore.error.calledWith(sinon.match('Reached maximum attempts')));
+      assert(
+        fakeCore.error.calledWith(sinon.match('Reached maximum attempts')),
+      );
     });
   });
 });

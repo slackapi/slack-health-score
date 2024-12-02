@@ -25,11 +25,13 @@ module.exports = {
     if (extensions.length === 0) {
       core.error('Extensions not specified');
     } else {
-      if (includes.length === 0) core.warning('Directories to be included not specified');
+      if (includes.length === 0)
+        core.warning('Directories to be included not specified');
       com = module.exports.grep(core, extensions, includes, excludes); // to-do et al comments
     }
     return {
-      comments: com, coverageMisses: misses,
+      comments: com,
+      coverageMisses: misses,
     };
   },
   grep: findProblematicComments,

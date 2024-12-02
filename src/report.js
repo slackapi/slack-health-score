@@ -14,23 +14,25 @@ const PROBLEMATIC_COMMENT_PENALTY = 100;
 module.exports = async function reportStatus(startTime, core, github, score) {
   const gh = core.getInput('github_token');
   if (!gh) {
-    core.warning('No GitHub token found; will not report score on commit status.');
+    core.warning(
+      'No GitHub token found; will not report score on commit status.',
+    );
     return 0;
   }
 
   core.info(JSON.stringify(score, null, 2));
   // Calculate score
-  const points = (
-    (score.comments.length * PROBLEMATIC_COMMENT_PENALTY)
-    + (score.coverageMisses * UNCOVERED_LINE_PENALTY)
-  ) * -1;
+  const points =
+    (score.comments.length * PROBLEMATIC_COMMENT_PENALTY +
+      score.coverageMisses * UNCOVERED_LINE_PENALTY) *
+    -1;
 
   // Report the thing
   const ctx = github.context;
   const octokit = github.getOctokit(gh);
   let details = `# Score Breakdown
 `;
-  if (score.comments && score.comments.length) {
+  if (score.comments?.length) {
     details += `
 ## Problematic Comments
 

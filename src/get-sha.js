@@ -6,7 +6,9 @@
 module.exports = function getCommitSHA(core, github) {
   // Get GitHub-event-relevant contextual details, like commit SHA
   const ctx = github.context;
-  core.debug(`event is ${ctx.eventName} with payload ${JSON.stringify(ctx.payload, null, 2)}`);
+  core.debug(
+    `event is ${ctx.eventName} with payload ${JSON.stringify(ctx.payload, null, 2)}`,
+  );
   let sha;
   // Depending on the exact GitHub event that triggers the action, we need to report the status on different payload
   // fields representing the correct SHA
@@ -21,7 +23,9 @@ module.exports = function getCommitSHA(core, github) {
       sha = ctx.sha;
   }
   if (!sha) {
-    throw new Error(`Could not determine SHA from GitHub context payload: ${JSON.stringify(ctx, null, 2)}`);
+    throw new Error(
+      `Could not determine SHA from GitHub context payload: ${JSON.stringify(ctx, null, 2)}`,
+    );
   }
   core.info(`Using SHA: ${sha}`);
   return sha;
