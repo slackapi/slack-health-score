@@ -10,9 +10,14 @@ const getSHA = require('../get-sha');
 module.exports = async function retrieveCodeCoverage(core, github) {
   // See if we can get a coverage overview for this commit from codecov
   const codecovToken = core.getInput('codecov_token');
-  const maxAttempts = parseInt(core.getInput('codecov_max_attempts'), 10) > 0 ? parseInt(core.getInput('codecov_max_attempts'), 10) : 10;
-  const retryDelay = parseInt(core.getInput('codecov_retry_delay'), 10) || 10000;
-  const treatTimeoutAsError = core.getInput('codecov_treat_timeout_as_error') === 'true';
+  const maxAttempts =
+    Number.parseInt(core.getInput('codecov_max_attempts'), 10) > 0
+      ? Number.parseInt(core.getInput('codecov_max_attempts'), 10)
+      : 10;
+  const retryDelay =
+    Number.parseInt(core.getInput('codecov_retry_delay'), 10) || 10000;
+  const treatTimeoutAsError =
+    core.getInput('codecov_treat_timeout_as_error') === 'true';
 
   let misses = 0;
   let attempts = 1;
@@ -30,18 +35,21 @@ module.exports = async function retrieveCodeCoverage(core, github) {
           repo_name: ctx.repo.repo,
           commitid: sha,
         });
-        core.debug(`codecov api response: ${JSON.stringify(coverage, null, 2)}`);
-        if (coverage && coverage.data) {
-          if (coverage.data.totals && coverage.data.totals.misses) {
+        core.debug(
+          `codecov api response: ${JSON.stringify(coverage, null, 2)}`,
+        );
+        if (coverage?.data) {
+          if (coverage.data.totals?.misses) {
             misses = coverage.data.totals.misses;
             core.info(`${misses} uncovered lines according to codecov`);
             break;
-          } else {
-            core.info('codecov response data present but missing totals, delaying');
-            // if totals are missing, probably codecov has not compiled the coverage info yet; delay and try again.
-            attempts += 1;
-            await sleep(retryDelay);
           }
+          core.info(
+            'codecov response data present but missing totals, delaying',
+          );
+          // if totals are missing, probably codecov has not compiled the coverage info yet; delay and try again.
+          attempts += 1;
+          await sleep(retryDelay);
         } else {
           core.info('codecov response data missing, delaying');
           // if totals are missing, probably codecov has not compiled the coverage info yet; delay and try again.

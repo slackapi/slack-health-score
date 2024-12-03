@@ -1,5 +1,8 @@
 const { assert } = require('chai');
-const { getAnnotations, parseYamlArray } = require('../../src/helpers/helper-functions');
+const {
+  getAnnotations,
+  parseYamlArray,
+} = require('../../src/helpers/helper-functions');
 
 describe('helpers', () => {
   it('should have a parseYamlArray function', async () => {
@@ -71,44 +74,77 @@ describe('helpers', () => {
       assert.deepEqual(getAnnotations(comments), []);
     });
     it('should handle find outputs of different formats', async () => {
-      assert.deepEqual(getAnnotations([{ path: 'path', line_no: 10, comment: '// TODO: random stuff', commentType: 'TODO' }]), [
-        {
-          path: 'path',
-          start_line: 10,
-          end_line: 10,
-          annotation_level: 'warning',
-          message: 'Problematic comment ("TODO") identified',
-        },
-      ]);
-      assert.deepEqual(getAnnotations([
-        { path: 'path', line_no: 10, comment: '// FIXME: random stuff', commentType: 'FIXME' },
-        { path: 'path2', line_no: 15, comment: '// random FIXME comment', commmentType: null }]), [
-        {
-          path: 'path',
-          start_line: 10,
-          end_line: 10,
-          annotation_level: 'warning',
-          message: 'Problematic comment ("FIXME") identified',
-        },
-        {
-          path: 'path2',
-          start_line: 15,
-          end_line: 15,
-          annotation_level: 'warning',
-          message: 'Problematic comment ("TODO", "HACK", "FIXME") identified',
-        },
-      ]);
+      assert.deepEqual(
+        getAnnotations([
+          {
+            path: 'path',
+            line_no: 10,
+            comment: '// TODO: random stuff',
+            commentType: 'TODO',
+          },
+        ]),
+        [
+          {
+            path: 'path',
+            start_line: 10,
+            end_line: 10,
+            annotation_level: 'warning',
+            message: 'Problematic comment ("TODO") identified',
+          },
+        ],
+      );
+      assert.deepEqual(
+        getAnnotations([
+          {
+            path: 'path',
+            line_no: 10,
+            comment: '// FIXME: random stuff',
+            commentType: 'FIXME',
+          },
+          {
+            path: 'path2',
+            line_no: 15,
+            comment: '// random FIXME comment',
+            commmentType: null,
+          },
+        ]),
+        [
+          {
+            path: 'path',
+            start_line: 10,
+            end_line: 10,
+            annotation_level: 'warning',
+            message: 'Problematic comment ("FIXME") identified',
+          },
+          {
+            path: 'path2',
+            start_line: 15,
+            end_line: 15,
+            annotation_level: 'warning',
+            message: 'Problematic comment ("TODO", "HACK", "FIXME") identified',
+          },
+        ],
+      );
     });
     it('should default to line 1 for outputs without line number', async () => {
-      assert.deepEqual(getAnnotations([{ path: 'path', comment: '// TODO: random stuff', commentType: 'TODO' }]), [
-        {
-          path: 'path',
-          start_line: 1,
-          end_line: 1,
-          annotation_level: 'warning',
-          message: 'Problematic comment ("TODO") identified',
-        },
-      ]);
+      assert.deepEqual(
+        getAnnotations([
+          {
+            path: 'path',
+            comment: '// TODO: random stuff',
+            commentType: 'TODO',
+          },
+        ]),
+        [
+          {
+            path: 'path',
+            start_line: 1,
+            end_line: 1,
+            annotation_level: 'warning',
+            message: 'Problematic comment ("TODO") identified',
+          },
+        ],
+      );
     });
   });
 });

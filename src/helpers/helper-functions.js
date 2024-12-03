@@ -15,7 +15,10 @@ module.exports = {
       .map((item) => item.trim().replace(/^- */, ''))
       .filter(Boolean)
       .map((item) => {
-        if ((item.startsWith('"') && item.endsWith('"')) || (item.startsWith("'") && item.endsWith("'"))) {
+        if (
+          (item.startsWith('"') && item.endsWith('"')) ||
+          (item.startsWith("'") && item.endsWith("'"))
+        ) {
           return item.slice(1, -1);
         }
         return item;
@@ -32,7 +35,9 @@ module.exports = {
       start_line: c.line_no ? c.line_no : 1,
       end_line: c.line_no ? c.line_no : 1,
       annotation_level: 'warning',
-      message: c.commentType ? (`Problematic comment ("${c.commentType}") identified`) : ('Problematic comment ("TODO", "HACK", "FIXME") identified'),
+      message: c.commentType
+        ? `Problematic comment ("${c.commentType}") identified`
+        : 'Problematic comment ("TODO", "HACK", "FIXME") identified',
     }));
   },
 };
