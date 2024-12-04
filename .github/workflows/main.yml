@@ -17,7 +17,7 @@ jobs:
       - run: npm run build
       - run: npm test
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@v4.6.0
+        uses: codecov/codecov-action@v5.0.7
         with:
           directory: ./coverage
           token: ${{ secrets.CODECOV_TOKEN }}
