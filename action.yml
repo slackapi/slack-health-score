@@ -14,7 +14,7 @@ inputs:
     description: 'Ignore the specified files and directories. Essentially a direct argument into `find` `-not -path "{arg}"`. Defaults to contents of `.gitignore`. E.g. "node_modules"'
     required: false
   codecov_token:
-    description: 'A CodeCov API access token with read permissions to the repo. This _cannot_ be a CodeCov "Global Upload" token - it _must_ be a human user API access token. Setting this will try to pull coverage information for the repo from CodeCov to include in health score calculation; not setting it will exclude code coverage from health score calcuation.'
+    description: 'A CodeCov API access token with read permissions to the repo. This _cannot_ be a CodeCov "Global Upload" token - it _must_ be a human user API access token. Setting this will try to pull coverage information for the repo from CodeCov to include in health score calculation; not setting it will exclude code coverage from health score calculation.'
     required: false
   codecov_max_attempts:
     description: 'Maximum number of times to try retrieving code coverage information from codecov. Defaults to 10.'
