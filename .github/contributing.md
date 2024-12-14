@@ -8,7 +8,7 @@ There are many ways you can contribute! :heart:
 
 ### Bug Reports and Fixes :bug:
 
-- If you find a bug, please [create a new issue](https://github.com/slackapi/slack-health-score/issues/new). Fill out the "Bug Report" section of the issue template. Even if an Issue is closed, feel free to comment and add details, it will still
+- If you find a bug, please [create a new issue](https://github.com/slackapi/slack-health-score/issues/new). Complete the ‘Bug Report’ section of the issue template. Even if an Issue is closed, feel free to comment and add details, it will still
    be reviewed.
 - Issues that have already been identified as a bug (note: able to reproduce) will be labelled `bug`.
 - If you'd like to submit a fix for a bug, [send a Pull Request](#creating_a_pull_request) and mention the Issue number.
