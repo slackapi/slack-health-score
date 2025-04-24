@@ -6,6 +6,7 @@ updates:
       - "/.api/apis/codecov"
     schedule:
       interval: "monthly"
+    versioning-strategy: increase
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
