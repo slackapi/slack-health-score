@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - run: npm install
+      - run: npm ci
       - run: npm run build
       - run: npm test
       - name: Upload coverage to CodeCov
@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - run: npm install
+      - run: npm ci
       - run: npm run build
       - name: Yo dawg I heard you like healthscores so I healthscored your healthscore so you can healthscore while you healthscore
         uses: ./
