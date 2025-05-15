@@ -9,14 +9,14 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout action
-      uses: actions/checkout@v4
-    - name: Build action
-      run: npm install
-    - name: Healthscore the healthscore
-      id: slack-health-score
-      uses: ./.
-      with:
-        github_token: garbage
-        extension: js
-        include: src
+      - name: Checkout action
+        uses: actions/checkout@v4
+      - name: Build action
+        run: npm ci
+      - name: Healthscore the healthscore
+        id: slack-health-score
+        uses: ./.
+        with:
+          github_token: garbage
+          extension: js
+          include: src
