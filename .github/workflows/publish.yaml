@@ -7,16 +7,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          persist-credentials: false
           ref: ${{ github.event.release.tag_name }}
       - name: Install deps
         run: npm ci
       - name: Build Action
         run: npm run build
-      - uses: JasonEtco/build-and-tag-action@v2
+      - uses: JasonEtco/build-and-tag-action@dd5e4991048c325f6d85b4155e586fc211c644da # v2.0.1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
