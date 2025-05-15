@@ -1,6 +1,6 @@
 name: Tests
 on:
-  pull_request_target:
+  pull_request:
   push:
     branches:
       - main
@@ -8,11 +8,9 @@ on:
 jobs:
   unit_tests:
     runs-on: ubuntu-latest
-    environment: staging
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Checkout
+        uses: actions/checkout@v4
       - run: npm ci
       - run: npm run build
       - run: npm test
@@ -28,12 +26,9 @@ jobs:
     permissions:
       checks: write
     runs-on: ubuntu-latest
-    environment: staging
     steps:
       - name: Setup repo
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
       - run: npm ci
       - run: npm run build
       - name: Yo dawg I heard you like healthscores so I healthscored your healthscore so you can healthscore while you healthscore
