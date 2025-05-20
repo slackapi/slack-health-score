@@ -8,14 +8,18 @@ on:
 jobs:
   unit_tests:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: npm ci
       - run: npm run build
       - run: npm test
       - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@v5.4.2
+        uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # v5.4.2
         with:
           directory: ./coverage
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -28,7 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: npm ci
       - run: npm run build
       - name: Yo dawg I heard you like healthscores so I healthscored your healthscore so you can healthscore while you healthscore
