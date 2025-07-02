@@ -33,9 +33,9 @@ runs:
       uses: zizmorcore/zizmor-action@f52a838cfabf134edcbaa7c8b3677dde20045018 # v0.1.1
     - name: Checkup
       uses: actions/github-script@v7
+      env:
+        INPUT_EXTENSION: ${{ inputs.extension }}
       with:
-        env:
-          INPUT_EXTENSION: ${{ inputs.extension }}
         script: |
           const script = require("./dist/index.js");
           await script({ core, github });
