@@ -11,7 +11,13 @@ const PROBLEMATIC_COMMENT_PENALTY = 100;
  * @param {import('./types').HealthScore} score The health score to be reported
  * @returns {Promise<number>} Total calculated health score
  */
-module.exports = async function reportStatus(startTime, core, github, score) {
+module.exports = async function reportStatus(
+  context,
+  startTime,
+  core,
+  github,
+  score,
+) {
   const gh = core.getInput('github_token');
   if (!gh) {
     core.warning(
@@ -28,7 +34,7 @@ module.exports = async function reportStatus(startTime, core, github, score) {
     -1;
 
   // Report the thing
-  const ctx = github.context;
+  const ctx = context;
   const octokit = github.getOctokit(gh);
   let details = `# Score Breakdown
 `;

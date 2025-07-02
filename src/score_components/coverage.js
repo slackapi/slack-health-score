@@ -24,7 +24,7 @@ module.exports = async function retrieveCodeCoverage(context, core, github) {
   let attempts = 1;
 
   if (codecovToken) {
-    const ctx = github.context;
+    const ctx = context;
     codecov.auth(codecovToken);
     const sha = getSHA(context, core, github);
     while (attempts <= maxAttempts) {
