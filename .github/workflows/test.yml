@@ -29,6 +29,7 @@ jobs:
     needs: unit_tests
     permissions:
       checks: write
+      security-events: write
     runs-on: ubuntu-latest
     steps:
       - name: Setup repo

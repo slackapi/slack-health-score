@@ -7,11 +7,17 @@ const PROBLEMATIC_COMMENT_PENALTY = 100;
 /**
  * @param {Date} startTime the JavaScript Date of the start of this action's run
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
- * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
+ * @param {import('@octokit/rest').Octokit} github `@actions/github` GitHub Actions core helper utility
  * @param {import('./types').HealthScore} score The health score to be reported
  * @returns {Promise<number>} Total calculated health score
  */
-module.exports = async function reportStatus(startTime, core, github, score) {
+module.exports = async function reportStatus(
+  context,
+  startTime,
+  core,
+  github,
+  score,
+) {
   const gh = core.getInput('github_token');
   if (!gh) {
     core.warning(
@@ -28,8 +34,8 @@ module.exports = async function reportStatus(startTime, core, github, score) {
     -1;
 
   // Report the thing
-  const ctx = github.context;
-  const octokit = github.getOctokit(gh);
+  const ctx = context;
+  const octokit = github;
   let details = `# Score Breakdown
 `;
   if (score.comments?.length) {
@@ -48,11 +54,13 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
   const annotations = getAnnotations(score.comments);
   // TODO: handle API call erroring out
   try {
+    core.info('-=- start -=-');
+    core.debug('-=- test -=-');
     await octokit.rest.checks.create({
       name: 'Health Score',
       owner: ctx.repo.owner,
       repo: ctx.repo.repo,
-      head_sha: getSHA(core, github),
+      head_sha: getSHA(context, core, github),
       status: 'completed',
       conclusion: 'neutral',
       completed_at: new Date().toISOString(),
@@ -65,7 +73,9 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
       },
     });
   } catch (e) {
+    core.info('-=- error -=-');
     core.error(e);
+    core.debug('-=- debug -=-');
     core.error('Octokit checks creation call failed');
   }
   return points;

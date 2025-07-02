@@ -6,11 +6,12 @@ const { parseYamlArray } = require('./helpers/helper-functions');
 module.exports = {
   /**
    * @description Compiles the health score components
+   * @param {Object} context Context of the workflow run - https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts
    * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
    * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
    * @returns {Promise<import('./types').HealthScore>} score Health score details object
    */
-  compile: async function compileScore(core, github) {
+  compile: async function compileScore(context, core, github) {
     // TODO: wire up action outputs
     const extensionInput = core.getInput('extension');
     const includeInput = core.getInput('include');
@@ -21,7 +22,7 @@ module.exports = {
     const excludes = parseYamlArray(excludeInput);
 
     let com = '';
-    const misses = await module.exports.coverage(core, github); // uncovered LoC
+    const misses = await module.exports.coverage(context, core, github); // uncovered LoC
     if (extensions.length === 0) {
       core.error('Extensions not specified');
     } else {
