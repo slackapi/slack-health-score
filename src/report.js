@@ -54,7 +54,7 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
   const annotations = getAnnotations(score.comments);
   // TODO: handle API call erroring out
   try {
-    core.info("-=- start -=-");
+    core.info('-=- start -=-');
     await octokit.rest.checks.create({
       name: 'Health Score',
       owner: ctx.repo.owner,
@@ -72,9 +72,9 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
       },
     });
   } catch (e) {
-    core.info("-=- error -=-");
+    core.info('-=- error -=-');
     core.error(e);
-    core.debug("-=- debug -=-");
+    core.debug('-=- debug -=-');
     core.error('Octokit checks creation call failed');
   }
   return points;
