@@ -35,6 +35,13 @@ runs:
       uses: actions/github-script@v7
       env:
         INPUT_EXTENSION: ${{ inputs.extension }}
+        INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
+        INPUT_INCLUDE: ${{ inputs.include }}
+        INPUT_EXCLUDE: ${{ inputs.exclude }}
+        INPUT_CODECOV_TOKEN: ${{ inputs.codecov_token }}
+        INPUT_CODECOV_MAX_ATTEMPTS: ${{ inputs.codecov_max_attempts }}
+        INPUT_CODECOV_RETRY_DELAY: ${{ inputs.codecov_retry_delay }}
+        INPUT_CODECOV_TREAT_TIMEOUT_AS_ERROR: ${{ inputs.codecov_treat_timeout_as_error }}
       with:
         script: |
           const script = require("./dist/index.js");
