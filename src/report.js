@@ -55,6 +55,7 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
   // TODO: handle API call erroring out
   try {
     core.info('-=- start -=-');
+    core.debug('-=- test -=-');
     await octokit.rest.checks.create({
       name: 'Health Score',
       owner: ctx.repo.owner,

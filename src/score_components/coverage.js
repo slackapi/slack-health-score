@@ -5,7 +5,7 @@ const getSHA = require('../get-sha');
  * @description Compiles the health score components
  * @param {Object} context Context of the workflow run - https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
- * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
+ * @param {import('@octokit/rest')} github `@octokit/rest` GitHub Actions client
  * @returns {Promise<number>} Number of uncovered lines of code, or 0 in the case of no codecov token specified
  */
 module.exports = async function retrieveCodeCoverage(context, core, github) {
