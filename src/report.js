@@ -7,7 +7,7 @@ const PROBLEMATIC_COMMENT_PENALTY = 100;
 /**
  * @param {Date} startTime the JavaScript Date of the start of this action's run
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
- * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
+ * @param {import('@octokit/rest').Octokit} github `@actions/github` GitHub Actions core helper utility
  * @param {import('./types').HealthScore} score The health score to be reported
  * @returns {Promise<number>} Total calculated health score
  */
@@ -35,7 +35,7 @@ module.exports = async function reportStatus(
 
   // Report the thing
   const ctx = context;
-  const octokit = github.getOctokit(gh);
+  const octokit = github;
   let details = `# Score Breakdown
 `;
   if (score.comments?.length) {

@@ -35,7 +35,8 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.1",
-    "@api/codecov": "file:.api/apis/codecov"
+    "@api/codecov": "file:.api/apis/codecov",
+    "@octokit/rest": "^22.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
