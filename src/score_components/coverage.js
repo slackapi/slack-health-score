@@ -3,11 +3,12 @@ const getSHA = require('../get-sha');
 
 /**
  * @description Compiles the health score components
+ * @param {Object} context Context of the workflow run - https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
  * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
  * @returns {Promise<number>} Number of uncovered lines of code, or 0 in the case of no codecov token specified
  */
-module.exports = async function retrieveCodeCoverage(core, github) {
+module.exports = async function retrieveCodeCoverage(context, core, github) {
   // See if we can get a coverage overview for this commit from codecov
   const codecovToken = core.getInput('codecov_token');
   const maxAttempts =
@@ -25,7 +26,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
   if (codecovToken) {
     const ctx = github.context;
     codecov.auth(codecovToken);
-    const sha = getSHA(core, github);
+    const sha = getSHA(context, core, github);
     while (attempts <= maxAttempts) {
       try {
         core.info('Pinging codecov API for coverage data...');
