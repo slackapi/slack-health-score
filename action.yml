@@ -45,7 +45,7 @@ runs:
       with:
         script: |
           const script = require("./dist/index.js");
-          await script({ context, core, github });
+          await script(context, core, github);
 branding:
   icon: 'heart'
   color: 'red'
