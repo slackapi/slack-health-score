@@ -60,7 +60,7 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
       name: 'Health Score',
       owner: ctx.repo.owner,
       repo: ctx.repo.repo,
-      head_sha: getSHA(core, github),
+      head_sha: getSHA(context, core, github),
       status: 'completed',
       conclusion: 'neutral',
       completed_at: new Date().toISOString(),
