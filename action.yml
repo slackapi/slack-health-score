@@ -27,8 +27,13 @@ inputs:
     required: false
 # outputs:
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: composite
+  steps:
+    - name: Actions
+      uses: zizmorcore/zizmor-action@f52a838cfabf134edcbaa7c8b3677dde20045018 # v0.1.1
+    - name: Checkup
+      run: node dist/index.js
+      shell: bash
 branding:
   icon: 'heart'
   color: 'red'
