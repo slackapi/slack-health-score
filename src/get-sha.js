@@ -1,10 +1,9 @@
 /**
  * @param {Object} context Context of the workflow run - https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
- * @param {import('@octokit/rest').Octokit} github `@octokit/actions` GitHub Actions core helper utility
  * @returns {string} SHA of the commit being inspected, regardless of underlying GitHub event
  */
-module.exports = function getCommitSHA(context, core, github) {
+module.exports = function getCommitSHA(context, core) {
   // Get GitHub-event-relevant contextual details, like commit SHA
   core.debug(
     `event is ${context.eventName} with payload ${JSON.stringify(context.payload, null, 2)}`,
@@ -14,7 +13,10 @@ module.exports = function getCommitSHA(context, core, github) {
   // fields representing the correct SHA
   switch (context.eventName) {
     case 'pull_request':
-      sha = context.payload.after || context.payload.pull_request.head.sha || context.sha;
+      sha =
+        context.payload.after ||
+        context.payload.pull_request.head.sha ||
+        context.sha;
       break;
     case 'pull_request_target':
       sha = context.payload.pull_request.head.sha;

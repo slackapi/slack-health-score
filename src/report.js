@@ -35,7 +35,6 @@ module.exports = async function reportStatus(
     -1;
 
   // Report the thing
-  const octokit = github;
   let details = `# Score Breakdown
 `;
   if (score.comments?.length) {
@@ -54,13 +53,11 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${co
   const annotations = getAnnotations(score.comments);
   // TODO: handle API call erroring out
   try {
-    core.info('-=- start -=-');
-    core.debug('-=- test -=-');
-    await octokit.rest.checks.create({
+    await github.rest.checks.create({
       name: 'Health Score',
       owner: context.repo.owner,
       repo: context.repo.repo,
-      head_sha: getSHA(context, core, github),
+      head_sha: getSHA(context, core),
       status: 'completed',
       conclusion: 'neutral',
       completed_at: new Date().toISOString(),
@@ -73,9 +70,7 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${co
       },
     });
   } catch (e) {
-    core.info('-=- error -=-');
     core.error(e);
-    core.debug('-=- debug -=-');
     core.error('Octokit checks creation call failed');
   }
   return points;

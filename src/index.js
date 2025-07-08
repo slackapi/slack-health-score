@@ -7,7 +7,7 @@ const hs = require('./health-score');
  */
 module.exports = async (context, core, github) => {
   const startTime = new Date();
-  hs.compile(context, core, github)
+  hs.compile(context, core)
     .then((score) => hs.report(context, startTime, core, github, score))
     .then(console.log)
     .catch((err) => {
