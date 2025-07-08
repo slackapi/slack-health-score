@@ -24,7 +24,6 @@ module.exports = async function retrieveCodeCoverage(context, core, github) {
   let attempts = 1;
 
   if (codecovToken) {
-    const ctx = context;
     codecov.auth(codecovToken);
     const sha = getSHA(context, core, github);
     while (attempts <= maxAttempts) {
@@ -32,8 +31,8 @@ module.exports = async function retrieveCodeCoverage(context, core, github) {
         core.info('Pinging codecov API for coverage data...');
         const coverage = await codecov.repos_commits_retrieve({
           service: 'github',
-          owner_username: ctx.repo.owner,
-          repo_name: ctx.repo.repo,
+          owner_username: context.repo.owner,
+          repo_name: context.repo.repo,
           commitid: sha,
         });
         core.debug(

@@ -5,9 +5,10 @@ const UNCOVERED_LINE_PENALTY = 1;
 const PROBLEMATIC_COMMENT_PENALTY = 100;
 
 /**
+ * @param {Object} context Context of the workflow run - https://github.com/actions/toolkit/blob/main/packages/github/src/context.ts
  * @param {Date} startTime the JavaScript Date of the start of this action's run
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
- * @param {import('@octokit/rest').Octokit} github `@actions/github` GitHub Actions core helper utility
+ * @param {import('@octokit/rest').Octokit} github `@octokit/rest` GitHub Actions client
  * @param {import('./types').HealthScore} score The health score to be reported
  * @returns {Promise<number>} Total calculated health score
  */
@@ -34,7 +35,6 @@ module.exports = async function reportStatus(
     -1;
 
   // Report the thing
-  const ctx = context;
   const octokit = github;
   let details = `# Score Breakdown
 `;
@@ -49,7 +49,7 @@ ${score.comments.map((c) => `- \`${c.comment}\``).join('\n')}\n`;
   if (score.coverageMisses) {
     details += `\n## Code Coverage
 
-According to [the code coverage for this project](https://app.codecov.io/gh/${ctx.repo.owner}/${ctx.repo.repo}), there are ${score.coverageMisses} uncovered lines of code. Each uncovered line of code contributes -${UNCOVERED_LINE_PENALTY} to the health score.`;
+According to [the code coverage for this project](https://app.codecov.io/gh/${context.repo.owner}/${context.repo.repo}), there are ${score.coverageMisses} uncovered lines of code. Each uncovered line of code contributes -${UNCOVERED_LINE_PENALTY} to the health score.`;
   }
   const annotations = getAnnotations(score.comments);
   // TODO: handle API call erroring out
@@ -58,8 +58,8 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
     core.debug('-=- test -=-');
     await octokit.rest.checks.create({
       name: 'Health Score',
-      owner: ctx.repo.owner,
-      repo: ctx.repo.repo,
+      owner: context.repo.owner,
+      repo: context.repo.repo,
       head_sha: getSHA(context, core, github),
       status: 'completed',
       conclusion: 'neutral',
