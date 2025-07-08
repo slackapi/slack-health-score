@@ -34,7 +34,7 @@ describe('health-score', () => {
         fakeCore.getInput.withArgs('extension').returns('js');
         fakeCore.getInput.withArgs('include').returns(null);
         fakeCore.getInput.withArgs('exclude').returns('test');
-        await hs.compile(fakeContext, fakeCore, fakeGithub);
+        await hs.compile(fakeContext, fakeCore);
         assert(
           fakeCore.warning.calledWith(
             sinon.match('Directories to be included not specified'),
@@ -46,7 +46,7 @@ describe('health-score', () => {
         fakeCore.getInput.withArgs('extension').returns('');
         fakeCore.getInput.withArgs('include').returns('src');
         fakeCore.getInput.withArgs('exclude').returns(null);
-        await hs.compile(fakeContext, fakeCore, fakeGithub);
+        await hs.compile(fakeContext, fakeCore);
         assert(
           fakeCore.error.calledWith(sinon.match('Extensions not specified')),
         );
@@ -60,10 +60,10 @@ describe('health-score', () => {
       fakeComments.onCall().returns(['']);
       fakeCoverage.onCall().returns(0);
 
-      await hs.compile(fakeContext, fakeCore, fakeGithub);
+      await hs.compile(fakeContext, fakeCore);
 
       assert(fakeComments.calledWith(fakeCore, ['js'], ['src'], ['test']));
-      assert(fakeCoverage.calledWith(fakeContext, fakeCore, fakeGithub));
+      assert(fakeCoverage.calledWith(fakeContext, fakeCore));
     });
 
     it('should handle inputs as block format', async () => {
@@ -74,7 +74,7 @@ describe('health-score', () => {
       fakeComments.onCall().returns(['']);
       fakeCoverage.onCall().returns(0);
 
-      await hs.compile(fakeContext, fakeCore, fakeGithub);
+      await hs.compile(fakeContext, fakeCore);
 
       assert(
         fakeComments.calledWith(
@@ -84,7 +84,7 @@ describe('health-score', () => {
           ['test', 'dist'],
         ),
       );
-      assert(fakeCoverage.calledWith(fakeContext, fakeCore, fakeGithub));
+      assert(fakeCoverage.calledWith(fakeContext, fakeCore));
     });
 
     it('should handle inputs in flow format', async () => {
@@ -95,7 +95,7 @@ describe('health-score', () => {
       fakeComments.onCall().returns(['']);
       fakeCoverage.onCall().returns(0);
 
-      await hs.compile(fakeContext, fakeCore, fakeGithub);
+      await hs.compile(fakeContext, fakeCore);
 
       assert(
         fakeComments.calledWith(
@@ -105,7 +105,7 @@ describe('health-score', () => {
           ['test', 'dist'],
         ),
       );
-      assert(fakeCoverage.calledWith(fakeContext, fakeCore, fakeGithub));
+      assert(fakeCoverage.calledWith(fakeContext, fakeCore));
     });
     it('should handle combined and unformatted inputs', async () => {
       fakeContext = contextValue;
@@ -115,7 +115,7 @@ describe('health-score', () => {
       fakeComments.onCall().returns(['']);
       fakeCoverage.onCall().returns(0);
 
-      await hs.compile(fakeContext, fakeCore, fakeGithub);
+      await hs.compile(fakeContext, fakeCore);
 
       assert(
         fakeComments.calledWith(
@@ -125,7 +125,7 @@ describe('health-score', () => {
           ['test', 'dist'],
         ),
       );
-      assert(fakeCoverage.calledWith(fakeContext, fakeCore, fakeGithub));
+      assert(fakeCoverage.calledWith(fakeContext, fakeCore));
     });
   });
   it('should have a report function', async () => {
