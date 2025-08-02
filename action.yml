@@ -51,7 +51,7 @@ runs:
     - name: Spelling
       uses: crate-ci/typos@392b78fe18a52790c53f42456e46124f77346842 # v1.34.0
       with:
-        config: ${{ env.GITHUB_ACTION_PATH || env.GITHUB_WORKSPACE }}/.typos.toml
+        config: ${{ github.action_path || github.workspace }}/.typos.toml
 branding:
   icon: "heart"
   color: "red"
