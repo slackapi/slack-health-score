@@ -1,5 +1,5 @@
-const fs = require('node:fs');
-const child_process = require('node:child_process');
+import child_process from 'node:child_process';
+import fs from 'node:fs';
 
 const CommentType = Object.freeze({
   TODO: 'TODO',
@@ -7,7 +7,7 @@ const CommentType = Object.freeze({
   HACK: 'HACK',
 });
 
-module.exports = function grepForProblematicComments(
+export default function grepForProblematicComments(
   core,
   ext,
   include,
@@ -77,7 +77,7 @@ module.exports = function grepForProblematicComments(
       };
     });
   return result;
-};
+}
 
 /**
  * Get the comment type.

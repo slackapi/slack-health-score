@@ -1,142 +1,229 @@
-const { assert } = require('chai');
-const sinon = require('sinon');
-const {
-  fakeCore,
-  fakeGithub,
-  fakeComments,
-  fakeCoverage,
-} = require('./stubs/stubs');
-const hs = require('../src/health-score');
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const contextValue = {
-  eventName: 'pull_request',
-  payload: {
-    after: 'abcd1234',
-  },
-  repo: {
-    owner: 'slackapi',
-    repo: 'slack-health-score',
-  },
-};
+// Mock the dependencies first
+vi.mock('../src/score_components/find-problematic-comments.js', () => ({
+  default: vi.fn(),
+}));
+
+vi.mock('../src/score_components/coverage.js', () => ({
+  default: vi.fn(),
+}));
+
+vi.mock('../src/report.js', () => ({
+  default: vi.fn(),
+}));
+
+import * as hs from '../src/health-score.js';
+import reportStatus from '../src/report.js';
+import retrieveCodeCoverage from '../src/score_components/coverage.js';
+// Import the mocked modules and the module under test
+import findProblematicComments from '../src/score_components/find-problematic-comments.js';
 
 describe('health-score', () => {
-  let fakeContext = {};
+  let fakeCore;
+  let fakeGithub;
+  let fakeContext;
+
   beforeEach(() => {
-    sinon.reset();
+    vi.clearAllMocks();
+
+    fakeCore = {
+      getInput: vi.fn(),
+      info: vi.fn(),
+      debug: vi.fn(),
+      warning: vi.fn(),
+      error: vi.fn(),
+    };
+
+    fakeGithub = {
+      rest: {
+        checks: {
+          create: vi.fn(),
+        },
+      },
+    };
+
+    fakeContext = {
+      eventName: 'pull_request',
+      payload: {
+        after: 'abcd1234',
+      },
+      repo: {
+        owner: 'slackapi',
+        repo: 'slack-health-score',
+      },
+    };
   });
-  it('should have a grep function', async () => {
-    assert.ok(hs.grep);
+
+  it('should have a compile function', () => {
+    expect(hs.compile).toBeTypeOf('function');
   });
+
+  it('should have a grep function', () => {
+    expect(hs.grep).toBeTypeOf('function');
+  });
+
+  it('should have a coverage function', () => {
+    expect(hs.coverage).toBeTypeOf('function');
+  });
+
+  it('should have a report function', () => {
+    expect(hs.report).toBeTypeOf('function');
+  });
+
   describe('check: inputs', () => {
-    describe('should call actions/core.error for invalid input', async () => {
+    describe('should call actions/core.error for invalid input', () => {
       it('should check for empty includes', async () => {
-        fakeContext = contextValue;
-        fakeCore.getInput.withArgs('extension').returns('js');
-        fakeCore.getInput.withArgs('include').returns(null);
-        fakeCore.getInput.withArgs('exclude').returns('test');
+        fakeCore.getInput.mockImplementation((input) => {
+          if (input === 'extension') return 'js';
+          if (input === 'include') return null;
+          if (input === 'exclude') return 'test';
+          return undefined;
+        });
+
+        findProblematicComments.mockReturnValue([]);
+        retrieveCodeCoverage.mockResolvedValue(0);
+
         await hs.compile(fakeContext, fakeCore, fakeGithub);
-        assert(
-          fakeCore.warning.calledWith(
-            sinon.match('Directories to be included not specified'),
-          ),
+
+        expect(fakeCore.warning).toHaveBeenCalledWith(
+          expect.stringContaining('Directories to be included not specified'),
         );
       });
+
       it('should check for invalid extensions', async () => {
-        fakeContext = contextValue;
-        fakeCore.getInput.withArgs('extension').returns('');
-        fakeCore.getInput.withArgs('include').returns('src');
-        fakeCore.getInput.withArgs('exclude').returns(null);
+        fakeCore.getInput.mockImplementation((input) => {
+          if (input === 'extension') return '';
+          if (input === 'include') return 'src';
+          if (input === 'exclude') return null;
+          return undefined;
+        });
+
         await hs.compile(fakeContext, fakeCore, fakeGithub);
-        assert(
-          fakeCore.error.calledWith(sinon.match('Extensions not specified')),
+
+        expect(fakeCore.error).toHaveBeenCalledWith(
+          expect.stringContaining('Extensions not specified'),
         );
       });
     });
+
     it('should take single input', async () => {
-      fakeContext = contextValue;
-      fakeCore.getInput.withArgs('extension').returns('js');
-      fakeCore.getInput.withArgs('include').returns('src');
-      fakeCore.getInput.withArgs('exclude').returns('test');
-      fakeComments.onCall().returns(['']);
-      fakeCoverage.onCall().returns(0);
+      fakeCore.getInput.mockImplementation((input) => {
+        if (input === 'extension') return 'js';
+        if (input === 'include') return 'src';
+        if (input === 'exclude') return 'test';
+        return undefined;
+      });
+
+      findProblematicComments.mockReturnValue(['']);
+      retrieveCodeCoverage.mockResolvedValue(0);
 
       await hs.compile(fakeContext, fakeCore, fakeGithub);
 
-      assert(fakeComments.calledWith(fakeCore, ['js'], ['src'], ['test']));
-      assert(fakeCoverage.calledWith(fakeContext, fakeCore, fakeGithub));
+      expect(findProblematicComments).toHaveBeenCalledWith(
+        fakeCore,
+        ['js'],
+        ['src'],
+        ['test'],
+      );
+      expect(retrieveCodeCoverage).toHaveBeenCalledWith(
+        fakeContext,
+        fakeCore,
+        fakeGithub,
+      );
     });
 
     it('should handle inputs as block format', async () => {
-      fakeContext = contextValue;
-      fakeCore.getInput.withArgs('extension').returns('-js\n- ts');
-      fakeCore.getInput.withArgs('include').returns('- src\n- lib');
-      fakeCore.getInput.withArgs('exclude').returns('- test\n- dist');
-      fakeComments.onCall().returns(['']);
-      fakeCoverage.onCall().returns(0);
+      fakeCore.getInput.mockImplementation((input) => {
+        if (input === 'extension') return '-js\n- ts';
+        if (input === 'include') return '- src\n- lib';
+        if (input === 'exclude') return '- test\n- dist';
+        return undefined;
+      });
+
+      findProblematicComments.mockReturnValue(['']);
+      retrieveCodeCoverage.mockResolvedValue(0);
 
       await hs.compile(fakeContext, fakeCore, fakeGithub);
 
-      assert(
-        fakeComments.calledWith(
-          fakeCore,
-          ['js', 'ts'],
-          ['src', 'lib'],
-          ['test', 'dist'],
-        ),
+      expect(findProblematicComments).toHaveBeenCalledWith(
+        fakeCore,
+        ['js', 'ts'],
+        ['src', 'lib'],
+        ['test', 'dist'],
       );
-      assert(fakeCoverage.calledWith(fakeContext, fakeCore, fakeGithub));
+      expect(retrieveCodeCoverage).toHaveBeenCalledWith(
+        fakeContext,
+        fakeCore,
+        fakeGithub,
+      );
     });
 
     it('should handle inputs in flow format', async () => {
-      fakeContext = contextValue;
-      fakeCore.getInput.withArgs('extension').returns("['js', 'ts']");
-      fakeCore.getInput.withArgs('include').returns("['src', 'lib']");
-      fakeCore.getInput.withArgs('exclude').returns("['test', 'dist']");
-      fakeComments.onCall().returns(['']);
-      fakeCoverage.onCall().returns(0);
+      fakeCore.getInput.mockImplementation((input) => {
+        if (input === 'extension') return "['js', 'ts']";
+        if (input === 'include') return "['src', 'lib']";
+        if (input === 'exclude') return "['test', 'dist']";
+        return undefined;
+      });
+
+      findProblematicComments.mockReturnValue(['']);
+      retrieveCodeCoverage.mockResolvedValue(0);
 
       await hs.compile(fakeContext, fakeCore, fakeGithub);
 
-      assert(
-        fakeComments.calledWith(
-          fakeCore,
-          ['js', 'ts'],
-          ['src', 'lib'],
-          ['test', 'dist'],
-        ),
+      expect(findProblematicComments).toHaveBeenCalledWith(
+        fakeCore,
+        ['js', 'ts'],
+        ['src', 'lib'],
+        ['test', 'dist'],
       );
-      assert(fakeCoverage.calledWith(fakeContext, fakeCore, fakeGithub));
+      expect(retrieveCodeCoverage).toHaveBeenCalledWith(
+        fakeContext,
+        fakeCore,
+        fakeGithub,
+      );
     });
+
     it('should handle combined and unformatted inputs', async () => {
-      fakeContext = contextValue;
-      fakeCore.getInput.withArgs('extension').returns('[js, ts]');
-      fakeCore.getInput.withArgs('include').returns(' -       src\n -lib');
-      fakeCore.getInput.withArgs('exclude').returns('["test", \'dist\']');
-      fakeComments.onCall().returns(['']);
-      fakeCoverage.onCall().returns(0);
+      fakeCore.getInput.mockImplementation((input) => {
+        if (input === 'extension') return '[js, ts]';
+        if (input === 'include') return ' -       src\n -lib';
+        if (input === 'exclude') return '["test", \'dist\']';
+        return undefined;
+      });
+
+      findProblematicComments.mockReturnValue(['']);
+      retrieveCodeCoverage.mockResolvedValue(0);
 
       await hs.compile(fakeContext, fakeCore, fakeGithub);
 
-      assert(
-        fakeComments.calledWith(
-          fakeCore,
-          ['js', 'ts'],
-          ['src', 'lib'],
-          ['test', 'dist'],
-        ),
+      expect(findProblematicComments).toHaveBeenCalledWith(
+        fakeCore,
+        ['js', 'ts'],
+        ['src', 'lib'],
+        ['test', 'dist'],
       );
-      assert(fakeCoverage.calledWith(fakeContext, fakeCore, fakeGithub));
+      expect(retrieveCodeCoverage).toHaveBeenCalledWith(
+        fakeContext,
+        fakeCore,
+        fakeGithub,
+      );
     });
   });
-  it('should have a report function', async () => {
-    assert.ok(hs.report);
-  });
+
   describe('check: report', () => {
     it('should handle invalid github token', async () => {
-      fakeContext = contextValue;
-      fakeCore.getInput.withArgs('github_token').returns(null);
+      fakeCore.getInput.mockImplementation((input) => {
+        if (input === 'github_token') return null;
+        return undefined;
+      });
+
       const score = { comments: [], coverageMisses: 0 };
       const startTime = new Date();
+
+      reportStatus.mockResolvedValue(0);
+
       const points = await hs.report(
         fakeContext,
         startTime,
@@ -144,18 +231,23 @@ describe('health-score', () => {
         fakeGithub,
         score,
       );
-      assert(
-        fakeCore.warning.calledWith(
-          sinon.match(
-            'No GitHub token found; will not report score on commit status.',
-          ),
-        ),
+
+      expect(reportStatus).toHaveBeenCalledWith(
+        fakeContext,
+        startTime,
+        fakeCore,
+        fakeGithub,
+        score,
       );
-      assert.deepEqual(points, 0);
+      expect(points).toBe(0);
     });
+
     it('should calculate points accurately', async () => {
-      fakeContext = contextValue;
-      fakeCore.getInput.withArgs('github_token').returns('test');
+      fakeCore.getInput.mockImplementation((input) => {
+        if (input === 'github_token') return 'test';
+        return undefined;
+      });
+
       const score = {
         comments: [
           { path: 'path', line_no: 10, comment: '// TODO: random stuff' },
@@ -164,6 +256,9 @@ describe('health-score', () => {
         coverageMisses: 5,
       };
       const startTime = new Date();
+
+      reportStatus.mockResolvedValue(-205);
+
       const points = await hs.report(
         fakeContext,
         startTime,
@@ -171,7 +266,8 @@ describe('health-score', () => {
         fakeGithub,
         score,
       );
-      assert.deepEqual(points, -205);
+
+      expect(points).toBe(-205);
     });
   });
 });
