@@ -105,7 +105,7 @@ describe('helpers', () => {
             path: 'path2',
             line_no: 15,
             comment: '// random FIXME comment',
-            commmentType: null,
+            commentType: null,
           },
         ]),
         [
