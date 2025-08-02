@@ -25,6 +25,7 @@ jobs:
         id: tag
         uses: teunmooij/github-versioned-release@3edf649c6e5e5e976d43f2584b15bdc8b4c8f0df # v1.2.1
         with:
+          include: .typos.toml
           template: javascript-action
         env:
           GITHUB_TOKEN: ${{ github.token }}
