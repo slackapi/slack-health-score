@@ -44,7 +44,8 @@ runs:
         INPUT_CODECOV_TREAT_TIMEOUT_AS_ERROR: ${{ inputs.codecov_treat_timeout_as_error }}
       with:
         script: |
-          const module = await import('./dist/index.js');
+          const path = process.env.GITHUB_WORKSPACE;
+          const module = await import(`${path}/dist/index.js`);
           const script = module.default;
           await script(context, core, github);
     - name: Spelling
