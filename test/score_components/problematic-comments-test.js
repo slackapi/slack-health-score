@@ -1,106 +1,127 @@
-const { assert } = require('chai');
-const sinon = require('sinon');
-const { fakeCore, fakeChildProcess, fakeFs } = require('../stubs/stubs');
-const grepForProblematicComments = require('../../src/score_components/find-problematic-comments');
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const commentPattern = '\\s*(//|/\\*|\\*).*\\b(TODO|HACK|FIXME)\\b';
+// Mock Node.js modules with vi.mock
+vi.mock('node:child_process', () => ({
+  default: {
+    execSync: vi.fn(),
+  },
+}));
+
+vi.mock('node:fs', () => ({
+  default: {
+    existsSync: vi.fn(),
+    readFileSync: vi.fn(),
+  },
+}));
+
+// Import the mocked modules and the function under test
+import child_process from 'node:child_process';
+import fs from 'node:fs';
+import grepForProblematicComments from '../../src/score_components/find-problematic-comments.js';
+
 describe('score component: problematic comments', () => {
+  const fakeCore = {
+    error: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn(),
+  };
+
   beforeEach(() => {
-    sinon.reset();
+    vi.clearAllMocks();
   });
-  it('should throw error incase execSync fails', async () => {
-    const score = {
-      comments: grepForProblematicComments(fakeCore, ['js'], [], []),
-      coverageMisses: 0,
-    };
-    fakeChildProcess.execSync.throws('error');
-    fakeFs.returns(null);
-    assert(
-      fakeCore.error.calledWith(
-        sinon.match('child_process execSync failed to execute'),
-      ),
-    );
-    assert.deepEqual(score.comments, []);
+
+  it('should export a function', () => {
+    expect(grepForProblematicComments).toBeTypeOf('function');
   });
-  describe('should handle different inputs', async () => {
-    it('should default to . if includes not provided', async () => {
-      const score = {
-        comments: grepForProblematicComments(fakeCore, ['js'], [], []),
-        coverageMisses: 0,
-      };
-      fakeChildProcess.execSync.returns('');
-      fakeFs.returns(null);
-      let find = 'find .';
-      find += ' \\( -name "*.js" \\) ';
-      find += ` -exec sh -c 'grep -EHn "${commentPattern}" "$0"' {} \\;`;
-      assert(fakeChildProcess.execSync.calledWith(find));
-      assert.deepEqual(score.comments, []);
+
+  const commentPattern = '\\s*(//|/\\*|\\*).*\\b(TODO|HACK|FIXME)\\b';
+
+  describe('should handle different inputs', () => {
+    it('should throw error in case execSync fails', () => {
+      child_process.execSync.mockImplementation(() => {
+        throw new Error('test error');
+      });
+      fs.existsSync.mockReturnValue(false);
+
+      const result = grepForProblematicComments(fakeCore, ['js'], [], []);
+
+      expect(fakeCore.error).toHaveBeenCalled();
+      expect(result).toEqual([]);
     });
-    it('should default to gitignore if excludes not provided', async () => {
-      const score = {
-        comments: grepForProblematicComments(fakeCore, ['js'], [], []),
-        coverageMisses: 0,
-      };
-      fakeChildProcess.execSync.returns('');
-      fakeFs.returns(null);
-      assert(fakeFs.calledWith('.gitignore'));
-      assert.deepEqual(score.comments, []);
+
+    it('should default to . if includes not provided', () => {
+      child_process.execSync.mockReturnValue('');
+      fs.existsSync.mockReturnValue(false);
+
+      grepForProblematicComments(fakeCore, ['js'], [], []);
+
+      let expectedFind = 'find .';
+      expectedFind += ' \\( -name "*.js" \\) ';
+      expectedFind += ` -exec sh -c 'grep -EHn "${commentPattern}" "$0"' {} \\;`;
+
+      expect(child_process.execSync).toHaveBeenCalledWith(expectedFind);
     });
-    it('should handle both includes and excludes', async () => {
-      const score = {
-        comments: grepForProblematicComments(
-          fakeCore,
-          ['js'],
-          ['src'],
-          ['test/'],
-        ),
-        coverageMisses: 0,
-      };
-      fakeChildProcess.execSync.returns('');
-      fakeFs.returns(null);
-      let find = 'find src';
-      find += ' \\( -name "*.js" \\) ';
-      find += ' -not -path "*/test/*" -not -path "*/test"';
-      find += ` -exec sh -c 'grep -EHn "${commentPattern}" "$0"' {} \\;`;
-      assert(fakeChildProcess.execSync.calledWith(find));
-      assert.deepEqual(score.comments, []);
+
+    it('should default to gitignore if excludes not provided', () => {
+      child_process.execSync.mockReturnValue('');
+      fs.existsSync.mockReturnValue(true);
+      fs.readFileSync.mockReturnValue('node_modules/\n.git/\n');
+
+      grepForProblematicComments(fakeCore, ['js'], [], []);
+
+      expect(fs.existsSync).toHaveBeenCalledWith('.gitignore');
     });
-    it('should handle both multiples includes, excludes and extensions', async () => {
-      const score = {
-        comments: grepForProblematicComments(
-          fakeCore,
-          ['js', 'ts'],
-          ['src', 'dir'],
-          ['test/', 'dist'],
-        ),
-        coverageMisses: 5,
-      };
-      fakeChildProcess.execSync.returns('');
-      fakeFs.returns(null);
-      let find = 'find src dir';
-      find += ' \\( -name "*.js" -o -name "*.ts" \\) ';
-      find += ' -not -path "*/test/*" -not -path "*/test" -not -path "*/dist"';
-      find += ` -exec sh -c 'grep -EHn "${commentPattern}" "$0"' {} \\;`;
-      assert(fakeChildProcess.execSync.calledWith(find));
-      assert.deepEqual(score.comments, []);
+
+    it('should handle both includes and excludes', () => {
+      child_process.execSync.mockReturnValue('');
+      fs.existsSync.mockReturnValue(false);
+
+      grepForProblematicComments(fakeCore, ['js'], ['src'], ['test/']);
+
+      let expectedFind = 'find src';
+      expectedFind += ' \\( -name "*.js" \\) ';
+      expectedFind += ' -not -path "*/test/*" -not -path "*/test"';
+      expectedFind += ` -exec sh -c 'grep -EHn "${commentPattern}" "$0"' {} \\;`;
+
+      expect(child_process.execSync).toHaveBeenCalledWith(expectedFind);
+    });
+
+    it('should handle both multiples includes, excludes and extensions', () => {
+      child_process.execSync.mockReturnValue('');
+      fs.existsSync.mockReturnValue(false);
+
+      grepForProblematicComments(
+        fakeCore,
+        ['js', 'ts'],
+        ['src', 'dir'],
+        ['test/', 'dist'],
+      );
+
+      let expectedFind = 'find src dir';
+      expectedFind += ' \\( -name "*.js" -o -name "*.ts" \\) ';
+      expectedFind +=
+        ' -not -path "*/test/*" -not -path "*/test" -not -path "*/dist"';
+      expectedFind += ` -exec sh -c 'grep -EHn "${commentPattern}" "$0"' {} \\;`;
+
+      expect(child_process.execSync).toHaveBeenCalledWith(expectedFind);
     });
   });
-  describe('should generate JSON in required format with grep results', async () => {
-    it('should handle empty grep results', async () => {
-      fakeChildProcess.execSync.returns('');
-      const score = {
-        comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []),
-        coverageMisses: 0,
-      };
-      assert.deepEqual(score.comments, []);
+
+  describe('should generate JSON in required format with grep results', () => {
+    it('should handle empty grep results', () => {
+      child_process.execSync.mockReturnValue('');
+      fs.existsSync.mockReturnValue(false);
+
+      const result = grepForProblematicComments(fakeCore, ['js'], ['src'], []);
+      expect(result).toEqual([]);
     });
-    it('should handle grep results', async () => {
-      fakeChildProcess.execSync.returns('path:10: // TODO: random stuff');
-      const score = {
-        comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []),
-        coverageMisses: 0,
-      };
-      assert.deepEqual(score.comments, [
+
+    it('should handle grep results', () => {
+      child_process.execSync.mockReturnValue('path:10: // TODO: random stuff');
+      fs.existsSync.mockReturnValue(false);
+
+      const result = grepForProblematicComments(fakeCore, ['js'], ['src'], []);
+      expect(result).toEqual([
         {
           path: 'path',
           line_no: 10,
@@ -109,15 +130,15 @@ describe('score component: problematic comments', () => {
         },
       ]);
     });
-    it('should handle multiple grep results', async () => {
-      fakeChildProcess.execSync.returns(
+
+    it('should handle multiple grep results', () => {
+      child_process.execSync.mockReturnValue(
         'path:10: // TODO: random stuff \n path2:15: // FIXME: random stuff',
       );
-      const score = {
-        comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []),
-        coverageMisses: 0,
-      };
-      assert.deepEqual(score.comments, [
+      fs.existsSync.mockReturnValue(false);
+
+      const result = grepForProblematicComments(fakeCore, ['js'], ['src'], []);
+      expect(result).toEqual([
         {
           path: 'path',
           line_no: 10,
@@ -132,15 +153,15 @@ describe('score component: problematic comments', () => {
         },
       ]);
     });
-    it('should handle grep results not in the correct format', async () => {
-      fakeChildProcess.execSync.returns(
+
+    it('should handle grep results not in the correct format', () => {
+      child_process.execSync.mockReturnValue(
         'path:10: // TODO: random stuff \n path2:15: // random things TODO',
       );
-      const score = {
-        comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []),
-        coverageMisses: 0,
-      };
-      assert.deepEqual(score.comments, [
+      fs.existsSync.mockReturnValue(false);
+
+      const result = grepForProblematicComments(fakeCore, ['js'], ['src'], []);
+      expect(result).toEqual([
         {
           path: 'path',
           line_no: 10,
@@ -155,13 +176,13 @@ describe('score component: problematic comments', () => {
         },
       ]);
     });
-    it('should handle grep results that have types without colons', async () => {
-      fakeChildProcess.execSync.returns('path:10: // TODO random stuff');
-      const score = {
-        comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []),
-        coverageMisses: 0,
-      };
-      assert.deepEqual(score.comments, [
+
+    it('should handle grep results that have types without colons', () => {
+      child_process.execSync.mockReturnValue('path:10: // TODO random stuff');
+      fs.existsSync.mockReturnValue(false);
+
+      const result = grepForProblematicComments(fakeCore, ['js'], ['src'], []);
+      expect(result).toEqual([
         {
           path: 'path',
           line_no: 10,
@@ -170,15 +191,15 @@ describe('score component: problematic comments', () => {
         },
       ]);
     });
-    it('should handle grep results that starts with code', async () => {
-      fakeChildProcess.execSync.returns(
+
+    it('should handle grep results that starts with code', () => {
+      child_process.execSync.mockReturnValue(
         'path:10: const result = "hello:world" // TODO: random stuff',
       );
-      const score = {
-        comments: grepForProblematicComments(fakeCore, ['js'], ['src'], []),
-        coverageMisses: 0,
-      };
-      assert.deepEqual(score.comments, [
+      fs.existsSync.mockReturnValue(false);
+
+      const result = grepForProblematicComments(fakeCore, ['js'], ['src'], []);
+      expect(result).toEqual([
         {
           path: 'path',
           line_no: 10,

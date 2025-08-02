@@ -1,5 +1,5 @@
-const getSHA = require('./get-sha');
-const { getAnnotations } = require('./helpers/helper-functions');
+import getSHA from './get-sha.js';
+import { getAnnotations } from './helpers/helper-functions.js';
 
 const UNCOVERED_LINE_PENALTY = 1;
 const PROBLEMATIC_COMMENT_PENALTY = 100;
@@ -11,7 +11,7 @@ const PROBLEMATIC_COMMENT_PENALTY = 100;
  * @param {import('./types').HealthScore} score The health score to be reported
  * @returns {Promise<number>} Total calculated health score
  */
-module.exports = async function reportStatus(
+export default async function reportStatus(
   context,
   startTime,
   core,
@@ -79,4 +79,4 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
     core.error('Octokit checks creation call failed');
   }
   return points;
-};
+}
