@@ -4,14 +4,13 @@ const { fakeCore, fakeGithub, fakeCodecov } = require('../stubs/stubs');
 const cov = require('../../src/score_components/coverage');
 
 describe('score component: code coverage', () => {
-  const originalGithubContext = fakeGithub.context;
+  let fakeContext = {};
   beforeEach(() => {
     sinon.reset();
     // Uncomment the following to get logging output during testing.
     // fakeCore.info.callsFake(console.log);
     // fakeCore.warning.callsFake(console.warn);
     // fakeCore.error.callsFake(console.error);
-    fakeGithub.context = originalGithubContext;
   });
 
   it('should export a function', () => {
@@ -19,12 +18,12 @@ describe('score component: code coverage', () => {
   });
   it('should return 0 if no `codecov_token` input provided', async () => {
     fakeCore.getInput.withArgs('codecov_token').returns(null);
-    const res = await cov(fakeCore, fakeGithub);
+    const res = await cov(fakeContext, fakeCore, fakeGithub);
     assert.equal(res, 0);
   });
   it('should return total number of missed lines from a successful codecov API response', async () => {
     fakeCore.getInput.withArgs('codecov_token').returns('abcd1234');
-    fakeGithub.context = {
+    fakeContext = {
       eventName: 'pull_request',
       payload: {
         after: 'abcd1234',
@@ -41,7 +40,7 @@ describe('score component: code coverage', () => {
         },
       },
     });
-    const res = await cov(fakeCore, fakeGithub);
+    const res = await cov(fakeContext, fakeCore, fakeGithub);
     assert.equal(res, 1337);
   });
   describe('retry, delay and timeout-error behaviour/inputs', () => {
@@ -49,7 +48,7 @@ describe('score component: code coverage', () => {
       fakeCore.getInput.withArgs('codecov_token').returns('abcd1234');
       fakeCore.getInput.withArgs('codecov_max_attempts').returns('-1');
       fakeCore.getInput.withArgs('codecov_retry_delay').returns('10');
-      fakeGithub.context = {
+      fakeContext = {
         eventName: 'pull_request',
         payload: {
           after: 'abcd1234',
@@ -62,7 +61,7 @@ describe('score component: code coverage', () => {
       fakeCodecov.repos_commits_retrieve
         .onCall(9)
         .resolves({ data: { totals: { misses: 42 } } });
-      const res = await cov(fakeCore, fakeGithub);
+      const res = await cov(fakeContext, fakeCore, fakeGithub);
       assert.strictEqual(res, 42);
     });
     it('should retry fetching with configured delay', async () => {
@@ -70,7 +69,7 @@ describe('score component: code coverage', () => {
       fakeCore.getInput.withArgs('codecov_max_attempts').returns('2');
       fakeCore.getInput.withArgs('codecov_retry_delay').returns('10');
 
-      fakeGithub.context = {
+      fakeContext = {
         eventName: 'pull_request',
         payload: {
           after: 'abcd1234',
@@ -86,7 +85,7 @@ describe('score component: code coverage', () => {
         .resolves({ data: { totals: { misses: 42 } } });
 
       const startTime = performance.now();
-      const res = await cov(fakeCore, fakeGithub);
+      const res = await cov(fakeContext, fakeCore, fakeGithub);
       const endTime = performance.now();
       assert.equal(res, 42);
       assert.equal(fakeCodecov.repos_commits_retrieve.callCount, 2);
@@ -99,7 +98,7 @@ describe('score component: code coverage', () => {
       fakeCore.getInput.withArgs('codecov_max_attempts').returns('1');
       fakeCore.getInput.withArgs('codecov_retry_delay').returns('10');
 
-      fakeGithub.context = {
+      fakeContext = {
         eventName: 'pull_request',
         payload: {
           after: 'abcd1234',
@@ -114,7 +113,7 @@ describe('score component: code coverage', () => {
         .onSecondCall()
         .resolves({ data: { totals: { misses: 42 } } });
 
-      const res = await cov(fakeCore, fakeGithub);
+      const res = await cov(fakeContext, fakeCore, fakeGithub);
       assert.equal(res, 0);
       assert.equal(fakeCodecov.repos_commits_retrieve.callCount, 1);
       assert(
@@ -131,7 +130,7 @@ describe('score component: code coverage', () => {
         .withArgs('codecov_treat_timeout_as_error')
         .returns('true');
 
-      fakeGithub.context = {
+      fakeContext = {
         eventName: 'pull_request',
         payload: {
           after: 'abcd1234',
@@ -145,7 +144,7 @@ describe('score component: code coverage', () => {
       fakeCodecov.repos_commits_retrieve
         .onSecondCall()
         .resolves({ data: { totals: { misses: 42 } } });
-      await cov(fakeCore, fakeGithub);
+      await cov(fakeContext, fakeCore, fakeGithub);
       assert(
         fakeCore.error.calledWith(sinon.match('Reached maximum attempts')),
       );
