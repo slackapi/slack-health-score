@@ -44,7 +44,8 @@ runs:
         INPUT_CODECOV_TREAT_TIMEOUT_AS_ERROR: ${{ inputs.codecov_treat_timeout_as_error }}
       with:
         script: |
-          import script from "./dist/index.js";
+          const module = await import('./dist/index.js');
+          const script = module.default;
           await script(context, core, github);
     - name: Spelling
       uses: crate-ci/typos@392b78fe18a52790c53f42456e46124f77346842 # v1.34.0
