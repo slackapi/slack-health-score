@@ -115,7 +115,7 @@ describe('score component: code coverage', () => {
       fakeCore.getInput.mockImplementation((input) => {
         if (input === 'codecov_token') return 'abcd1234';
         if (input === 'codecov_max_attempts') return '2';
-        if (input === 'codecov_retry_delay') return '10';
+        if (input === 'codecov_retry_delay') return '12';
         if (input === 'codecov_treat_timeout_as_error') return 'false';
         return undefined;
       });
