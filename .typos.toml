@@ -1,0 +1,5 @@
+# https://github.com/crate-ci/typos
+[files]
+extend-exclude = [
+    "biome.json"
+]

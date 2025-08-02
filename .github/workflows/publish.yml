@@ -2,7 +2,9 @@ name: Publish
 
 on:
   release:
-    types: [published, edited]
+    types:
+      - published
+      - edited
 
 jobs:
   build:
@@ -19,8 +21,11 @@ jobs:
         run: npm ci
       - name: Build Action
         run: npm run build
-      - uses: JasonEtco/build-and-tag-action@dd5e4991048c325f6d85b4155e586fc211c644da # v2.0.1
+      - name: Distribute the latest tagged release
+        id: tag
+        uses: teunmooij/github-versioned-release@3edf649c6e5e5e976d43f2584b15bdc8b4c8f0df # v1.2.1
+        with:
+          include: .typos.toml
+          template: javascript-action
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        with:
-          tag_name: ${{ github.event.release.tag_name }}
