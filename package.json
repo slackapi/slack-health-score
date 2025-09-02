@@ -38,7 +38,7 @@
     "@api/codecov": "file:.api/apis/codecov"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.1.3",
+    "@biomejs/biome": "2.2.2",
     "@vercel/ncc": "^0.38.3",
     "c8": "^10.1.3",
     "chai": "^6.0.1",
