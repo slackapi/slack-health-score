@@ -27,8 +27,25 @@ inputs:
     required: false
 # outputs:
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: composite
+  steps:
+    - name: Actions
+      uses: zizmorcore/zizmor-action@f52a838cfabf134edcbaa7c8b3677dde20045018 # v0.1.1
+    - name: Checkup
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      env:
+        INPUT_EXTENSION: ${{ inputs.extension }}
+        INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
+        INPUT_INCLUDE: ${{ inputs.include }}
+        INPUT_EXCLUDE: ${{ inputs.exclude }}
+        INPUT_CODECOV_TOKEN: ${{ inputs.codecov_token }}
+        INPUT_CODECOV_MAX_ATTEMPTS: ${{ inputs.codecov_max_attempts }}
+        INPUT_CODECOV_RETRY_DELAY: ${{ inputs.codecov_retry_delay }}
+        INPUT_CODECOV_TREAT_TIMEOUT_AS_ERROR: ${{ inputs.codecov_treat_timeout_as_error }}
+      with:
+        script: |
+          const script = require("./dist/index.js");
+          await script(context, core, github);
 branding:
   icon: 'heart'
   color: 'red'

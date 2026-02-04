@@ -20,10 +20,9 @@ const contextValue = {
 };
 
 describe('health-score', () => {
-  const originalGithubContext = fakeGithub.context;
+  let fakeContext = {};
   beforeEach(() => {
     sinon.reset();
-    fakeGithub.context = originalGithubContext;
   });
   it('should have a grep function', async () => {
     assert.ok(hs.grep);
@@ -31,11 +30,11 @@ describe('health-score', () => {
   describe('check: inputs', () => {
     describe('should call actions/core.error for invalid input', async () => {
       it('should check for empty includes', async () => {
+        fakeContext = contextValue;
         fakeCore.getInput.withArgs('extension').returns('js');
         fakeCore.getInput.withArgs('include').returns(null);
         fakeCore.getInput.withArgs('exclude').returns('test');
-        fakeGithub.context = contextValue;
-        await hs.compile(fakeCore, fakeGithub);
+        await hs.compile(fakeContext, fakeCore);
         assert(
           fakeCore.warning.calledWith(
             sinon.match('Directories to be included not specified'),
@@ -43,39 +42,39 @@ describe('health-score', () => {
         );
       });
       it('should check for invalid extensions', async () => {
+        fakeContext = contextValue;
         fakeCore.getInput.withArgs('extension').returns('');
         fakeCore.getInput.withArgs('include').returns('src');
         fakeCore.getInput.withArgs('exclude').returns(null);
-        fakeGithub.context = contextValue;
-        await hs.compile(fakeCore, fakeGithub);
+        await hs.compile(fakeContext, fakeCore);
         assert(
           fakeCore.error.calledWith(sinon.match('Extensions not specified')),
         );
       });
     });
     it('should take single input', async () => {
+      fakeContext = contextValue;
       fakeCore.getInput.withArgs('extension').returns('js');
       fakeCore.getInput.withArgs('include').returns('src');
       fakeCore.getInput.withArgs('exclude').returns('test');
-      fakeGithub.context = contextValue;
       fakeComments.onCall().returns(['']);
       fakeCoverage.onCall().returns(0);
 
-      await hs.compile(fakeCore, fakeGithub);
+      await hs.compile(fakeContext, fakeCore);
 
       assert(fakeComments.calledWith(fakeCore, ['js'], ['src'], ['test']));
-      assert(fakeCoverage.calledWith(fakeCore, fakeGithub));
+      assert(fakeCoverage.calledWith(fakeContext, fakeCore));
     });
 
     it('should handle inputs as block format', async () => {
+      fakeContext = contextValue;
       fakeCore.getInput.withArgs('extension').returns('-js\n- ts');
       fakeCore.getInput.withArgs('include').returns('- src\n- lib');
       fakeCore.getInput.withArgs('exclude').returns('- test\n- dist');
-      fakeGithub.context = contextValue;
       fakeComments.onCall().returns(['']);
       fakeCoverage.onCall().returns(0);
 
-      await hs.compile(fakeCore, fakeGithub);
+      await hs.compile(fakeContext, fakeCore);
 
       assert(
         fakeComments.calledWith(
@@ -85,18 +84,18 @@ describe('health-score', () => {
           ['test', 'dist'],
         ),
       );
-      assert(fakeCoverage.calledWith(fakeCore, fakeGithub));
+      assert(fakeCoverage.calledWith(fakeContext, fakeCore));
     });
 
     it('should handle inputs in flow format', async () => {
+      fakeContext = contextValue;
       fakeCore.getInput.withArgs('extension').returns("['js', 'ts']");
       fakeCore.getInput.withArgs('include').returns("['src', 'lib']");
       fakeCore.getInput.withArgs('exclude').returns("['test', 'dist']");
-      fakeGithub.context = contextValue;
       fakeComments.onCall().returns(['']);
       fakeCoverage.onCall().returns(0);
 
-      await hs.compile(fakeCore, fakeGithub);
+      await hs.compile(fakeContext, fakeCore);
 
       assert(
         fakeComments.calledWith(
@@ -106,17 +105,17 @@ describe('health-score', () => {
           ['test', 'dist'],
         ),
       );
-      assert(fakeCoverage.calledWith(fakeCore, fakeGithub));
+      assert(fakeCoverage.calledWith(fakeContext, fakeCore));
     });
     it('should handle combined and unformatted inputs', async () => {
+      fakeContext = contextValue;
       fakeCore.getInput.withArgs('extension').returns('[js, ts]');
       fakeCore.getInput.withArgs('include').returns(' -       src\n -lib');
       fakeCore.getInput.withArgs('exclude').returns('["test", \'dist\']');
-      fakeGithub.context = contextValue;
       fakeComments.onCall().returns(['']);
       fakeCoverage.onCall().returns(0);
 
-      await hs.compile(fakeCore, fakeGithub);
+      await hs.compile(fakeContext, fakeCore);
 
       assert(
         fakeComments.calledWith(
@@ -126,7 +125,7 @@ describe('health-score', () => {
           ['test', 'dist'],
         ),
       );
-      assert(fakeCoverage.calledWith(fakeCore, fakeGithub));
+      assert(fakeCoverage.calledWith(fakeContext, fakeCore));
     });
   });
   it('should have a report function', async () => {
@@ -134,11 +133,17 @@ describe('health-score', () => {
   });
   describe('check: report', () => {
     it('should handle invalid github token', async () => {
+      fakeContext = contextValue;
       fakeCore.getInput.withArgs('github_token').returns(null);
-      fakeGithub.context = contextValue;
       const score = { comments: [], coverageMisses: 0 };
       const startTime = new Date();
-      const points = await hs.report(startTime, fakeCore, fakeGithub, score);
+      const points = await hs.report(
+        fakeContext,
+        startTime,
+        fakeCore,
+        fakeGithub,
+        score,
+      );
       assert(
         fakeCore.warning.calledWith(
           sinon.match(
@@ -149,8 +154,8 @@ describe('health-score', () => {
       assert.deepEqual(points, 0);
     });
     it('should calculate points accurately', async () => {
+      fakeContext = contextValue;
       fakeCore.getInput.withArgs('github_token').returns('test');
-      fakeGithub.context = contextValue;
       const score = {
         comments: [
           { path: 'path', line_no: 10, comment: '// TODO: random stuff' },
@@ -159,7 +164,13 @@ describe('health-score', () => {
         coverageMisses: 5,
       };
       const startTime = new Date();
-      const points = await hs.report(startTime, fakeCore, fakeGithub, score);
+      const points = await hs.report(
+        fakeContext,
+        startTime,
+        fakeCore,
+        fakeGithub,
+        score,
+      );
       assert.deepEqual(points, -205);
     });
   });

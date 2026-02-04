@@ -13,10 +13,12 @@ It is recommended to set up this action as a separate GitHub Workflow `job`. Thi
 The following is an example `job` that requires that the `test` job completes first:
 
 ```yaml
+jobs:
   health-score:
     needs: test
     permissions:
       checks: write
+      security-events: write
     runs-on: ubuntu-latest
     steps:
       - name: Setup repo
