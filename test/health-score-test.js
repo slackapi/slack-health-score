@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { beforeEach, describe, it } from 'node:test';
 import hs from '../src/health-score.js';
-import { fakeComments, fakeCoverage, mocks } from './stubs/stubs.js';
+import { mocks } from './stubs/stubs.js';
 
 const contextValue = {
   eventName: 'pull_request',
@@ -68,16 +68,16 @@ describe('health-score', () => {
 
       await hs.compile(mocks.core, mocks.github);
 
-      assert.equal(fakeComments.mock.callCount(), 1);
+      assert.equal(mocks.grep.mock.callCount(), 1);
       const [core, exts, includes, excludes] =
-        fakeComments.mock.calls[0].arguments;
+        mocks.grep.mock.calls[0].arguments;
       assert.equal(core, mocks.core);
       assert.deepEqual(exts, ['js']);
       assert.deepEqual(includes, ['src']);
       assert.deepEqual(excludes, ['test']);
 
-      assert.equal(fakeCoverage.mock.callCount(), 1);
-      const [coreArg, githubArg] = fakeCoverage.mock.calls[0].arguments;
+      assert.equal(mocks.coverage.mock.callCount(), 1);
+      const [coreArg, githubArg] = mocks.coverage.mock.calls[0].arguments;
       assert.equal(coreArg, mocks.core);
       assert.equal(githubArg, mocks.github);
     });
@@ -94,14 +94,14 @@ describe('health-score', () => {
 
       await hs.compile(mocks.core, mocks.github);
 
-      assert.equal(fakeComments.mock.callCount(), 1);
+      assert.equal(mocks.grep.mock.callCount(), 1);
       const [_core, exts, includes, excludes] =
-        fakeComments.mock.calls[0].arguments;
+        mocks.grep.mock.calls[0].arguments;
       assert.deepEqual(exts, ['js', 'ts']);
       assert.deepEqual(includes, ['src', 'lib']);
       assert.deepEqual(excludes, ['test', 'dist']);
 
-      assert.equal(fakeCoverage.mock.callCount(), 1);
+      assert.equal(mocks.coverage.mock.callCount(), 1);
     });
 
     it('should handle inputs in flow format', async () => {
@@ -116,14 +116,14 @@ describe('health-score', () => {
 
       await hs.compile(mocks.core, mocks.github);
 
-      assert.equal(fakeComments.mock.callCount(), 1);
+      assert.equal(mocks.grep.mock.callCount(), 1);
       const [_core, exts, includes, excludes] =
-        fakeComments.mock.calls[0].arguments;
+        mocks.grep.mock.calls[0].arguments;
       assert.deepEqual(exts, ['js', 'ts']);
       assert.deepEqual(includes, ['src', 'lib']);
       assert.deepEqual(excludes, ['test', 'dist']);
 
-      assert.equal(fakeCoverage.mock.callCount(), 1);
+      assert.equal(mocks.coverage.mock.callCount(), 1);
     });
 
     it('should handle combined and unformatted inputs', async () => {
@@ -138,14 +138,14 @@ describe('health-score', () => {
 
       await hs.compile(mocks.core, mocks.github);
 
-      assert.equal(fakeComments.mock.callCount(), 1);
+      assert.equal(mocks.grep.mock.callCount(), 1);
       const [_core, exts, includes, excludes] =
-        fakeComments.mock.calls[0].arguments;
+        mocks.grep.mock.calls[0].arguments;
       assert.deepEqual(exts, ['js', 'ts']);
       assert.deepEqual(includes, ['src', 'lib']);
       assert.deepEqual(excludes, ['test', 'dist']);
 
-      assert.equal(fakeCoverage.mock.callCount(), 1);
+      assert.equal(mocks.coverage.mock.callCount(), 1);
     });
   });
 

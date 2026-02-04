@@ -101,12 +101,3 @@ export class Mock {
 }
 
 export const mocks = new Mock();
-
-// Backwards compatibility exports
-export const fakeCore = mocks.core;
-export const fakeGithub = mocks.github;
-export const fakeCodecov = mocks.codecov;
-export const fakeChildProcess = mocks.childProcess;
-export const fakeFs = mocks.fs.existsSync;
-export const fakeComments = mocks.grep;
-export const fakeCoverage = mocks.coverage;
