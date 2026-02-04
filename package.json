@@ -2,14 +2,15 @@
   "name": "slack-health-score",
   "version": "0.1.1",
   "description": "A rough health score reporter",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/index.js -o dist --license licenses.txt --source-map",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
-    "test": "npm run lint && c8 npm run test:mocha",
-    "test:mocha": "mocha --config .mocharc.json test/*-test.js test/**/*-test.js"
+    "test": "npm run lint && c8 npm run test:node",
+    "test:node": "node --test test/*-test.js test/**/*-test.js"
   },
   "repository": {
     "type": "git",
@@ -33,16 +34,13 @@
   },
   "homepage": "https://github.com/slackapi/slack-health-score#readme",
   "dependencies": {
-    "@actions/core": "^2.0.1",
-    "@actions/github": "^6.0.1",
+    "@actions/core": "^3.0.0",
+    "@actions/github": "^9.0.0",
     "@api/codecov": "file:.api/apis/codecov"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.13",
     "@vercel/ncc": "^0.38.4",
-    "c8": "^10.1.3",
-    "chai": "^6.2.2",
-    "mocha": "^11.7.5",
-    "sinon": "^21.0.1"
+    "c8": "^10.1.3"
   }
 }

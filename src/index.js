@@ -1,6 +1,6 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const hs = require('./health-score');
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import hs from './health-score.js';
 
 const startTime = new Date();
 hs.compile(core, github)

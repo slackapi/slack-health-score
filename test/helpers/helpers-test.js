@@ -1,13 +1,15 @@
-const { assert } = require('chai');
-const {
+import assert from 'node:assert';
+import { describe, it } from 'node:test';
+import {
   getAnnotations,
   parseYamlArray,
-} = require('../../src/helpers/helper-functions');
+} from '../../src/helpers/helper-functions.js';
 
 describe('helpers', () => {
-  it('should have a parseYamlArray function', async () => {
+  it('should have a parseYamlArray function', () => {
     assert.ok(parseYamlArray);
   });
+
   describe('array-parser', () => {
     it('should return an empty array for null input', () => {
       const result = parseYamlArray(null);
@@ -59,21 +61,25 @@ describe('helpers', () => {
       const result = parseYamlArray(input);
       assert.deepEqual(result, ['src', 'lib', 'test']);
     });
+
     it('should handle a mix of JSON and YAML formats', () => {
       const input = '["src", "lib"], "test", "date"';
       const result = parseYamlArray(input);
       assert.deepEqual(result, ['src', 'lib', 'test', 'date']);
     });
   });
-  it('should have a getAnnotation function', async () => {
+
+  it('should have a getAnnotation function', () => {
     assert.ok(getAnnotations);
   });
+
   describe('comment-annotations', () => {
-    it('should handle empty find outputs', async () => {
+    it('should handle empty find outputs', () => {
       const comments = [];
       assert.deepEqual(getAnnotations(comments), []);
     });
-    it('should handle find outputs of different formats', async () => {
+
+    it('should handle find outputs of different formats', () => {
       assert.deepEqual(
         getAnnotations([
           {
@@ -126,7 +132,8 @@ describe('helpers', () => {
         ],
       );
     });
-    it('should default to line 1 for outputs without line number', async () => {
+
+    it('should default to line 1 for outputs without line number', () => {
       assert.deepEqual(
         getAnnotations([
           {

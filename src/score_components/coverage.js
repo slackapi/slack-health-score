@@ -1,5 +1,5 @@
-const codecov = require('@api/codecov');
-const getSHA = require('../get-sha');
+import codecov from '@api/codecov';
+import getSHA from '../get-sha.js';
 
 /**
  * @description Compiles the health score components
@@ -7,7 +7,7 @@ const getSHA = require('../get-sha');
  * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
  * @returns {Promise<number>} Number of uncovered lines of code, or 0 in the case of no codecov token specified
  */
-module.exports = async function retrieveCodeCoverage(core, github) {
+export default async function retrieveCodeCoverage(core, github) {
   // See if we can get a coverage overview for this commit from codecov
   const codecovToken = core.getInput('codecov_token');
   const maxAttempts =
@@ -74,7 +74,7 @@ module.exports = async function retrieveCodeCoverage(core, github) {
     core.info('No codecov token provided, skipping coverage retrieval.');
   }
   return misses;
-};
+}
 
 function sleep(ms) {
   return new Promise((res) => {

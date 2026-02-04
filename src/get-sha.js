@@ -3,7 +3,7 @@
  * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
  * @returns {string} SHA of the commit being inspected, regardless of underlying GitHub event
  */
-module.exports = function getCommitSHA(core, github) {
+export default function getCommitSHA(core, github) {
   // Get GitHub-event-relevant contextual details, like commit SHA
   const ctx = github.context;
   core.debug(
@@ -29,4 +29,4 @@ module.exports = function getCommitSHA(core, github) {
   }
   core.info(`Using SHA: ${sha}`);
   return sha;
-};
+}
