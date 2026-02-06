@@ -5,4 +5,4 @@
  * @property {number} coverageMisses Number of lines of code not covered, according to codecov
  */
 
-module.exports = {};
+export default {};

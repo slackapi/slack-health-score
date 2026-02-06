@@ -1,14 +1,14 @@
-const findProblematicComments = require('./score_components/find-problematic-comments');
-const retrieveCodeCoverage = require('./score_components/coverage');
-const reportStatus = require('./report');
-const { parseYamlArray } = require('./helpers/helper-functions');
+import { parseYamlArray } from './helpers/helper-functions.js';
+import reportStatus from './report.js';
+import retrieveCodeCoverage from './score_components/coverage.js';
+import findProblematicComments from './score_components/find-problematic-comments.js';
 
-module.exports = {
+const hs = {
   /**
    * @description Compiles the health score components
    * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
    * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
-   * @returns {Promise<import('./types').HealthScore>} score Health score details object
+   * @returns {Promise<import('./types.js').HealthScore>} score Health score details object
    */
   compile: async function compileScore(core, github) {
     // TODO: wire up action outputs
@@ -21,13 +21,13 @@ module.exports = {
     const excludes = parseYamlArray(excludeInput);
 
     let com = '';
-    const misses = await module.exports.coverage(core, github); // uncovered LoC
+    const misses = await hs.coverage(core, github); // uncovered LoC
     if (extensions.length === 0) {
       core.error('Extensions not specified');
     } else {
       if (includes.length === 0)
         core.warning('Directories to be included not specified');
-      com = module.exports.grep(core, extensions, includes, excludes); // to-do et al comments
+      com = hs.grep(core, extensions, includes, excludes); // to-do et al comments
     }
     return {
       comments: com,
@@ -38,3 +38,5 @@ module.exports = {
   coverage: retrieveCodeCoverage,
   report: reportStatus,
 };
+
+export default hs;

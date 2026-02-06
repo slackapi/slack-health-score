@@ -21,9 +21,8 @@ jobs:
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
-          directory: ./coverage
+          files: test/coverage.txt
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: slackapi/slack-health-score
 
   health-score:
     needs: unit_tests

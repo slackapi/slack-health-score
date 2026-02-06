@@ -1,5 +1,5 @@
-const getSHA = require('./get-sha');
-const { getAnnotations } = require('./helpers/helper-functions');
+import getSHA from './get-sha.js';
+import { getAnnotations } from './helpers/helper-functions.js';
 
 const UNCOVERED_LINE_PENALTY = 1;
 const PROBLEMATIC_COMMENT_PENALTY = 100;
@@ -8,10 +8,10 @@ const PROBLEMATIC_COMMENT_PENALTY = 100;
  * @param {Date} startTime the JavaScript Date of the start of this action's run
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
  * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
- * @param {import('./types').HealthScore} score The health score to be reported
+ * @param {import('./types.js').HealthScore} score The health score to be reported
  * @returns {Promise<number>} Total calculated health score
  */
-module.exports = async function reportStatus(startTime, core, github, score) {
+export default async function reportStatus(startTime, core, github, score) {
   const gh = core.getInput('github_token');
   if (!gh) {
     core.warning(
@@ -69,4 +69,4 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
     core.error('Octokit checks creation call failed');
   }
   return points;
-};
+}
