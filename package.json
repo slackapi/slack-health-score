@@ -10,7 +10,7 @@
     "lint:fix": "biome check --write .",
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
     "test": "npm run lint && npm run test:node",
-    "test:node": "node --test --experimental-test-coverage test/*-test.js test/**/*-test.js"
+    "test:node": "node --test --experimental-test-coverage --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=test/coverage.txt test/*-test.js test/**/*-test.js"
   },
   "repository": {
     "type": "git",
