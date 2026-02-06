@@ -1,14 +1,14 @@
 import assert from 'node:assert';
 import { beforeEach, describe, it, mock } from 'node:test';
-import esmock from 'esmock';
+import cov from '../../src/score_components/coverage.js';
 
 describe('score component: code coverage', () => {
-  let cov;
   let mockCodecov;
   let mockCore;
   let mockGithub;
+  let mockGetSHA;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     mockCodecov = {
       auth: mock.fn(),
       repos_commits_retrieve: mock.fn(),
@@ -30,18 +30,16 @@ describe('score component: code coverage', () => {
       },
     };
 
-    cov = await esmock('../../src/score_components/coverage.js', {
-      '@api/codecov': { default: mockCodecov },
-    });
+    mockGetSHA = mock.fn(() => 'abcd1234');
   });
 
   it('should export a function', () => {
-    assert.equal(typeof cov.default, 'function');
+    assert.equal(typeof cov, 'function');
   });
 
   it('should return 0 if no `codecov_token` input provided', async () => {
     mockCore.getInput.mock.mockImplementation(() => '');
-    const res = await cov.default(mockCore, mockGithub);
+    const res = await cov(mockCore, mockGithub, mockCodecov, mockGetSHA);
     assert.equal(res, 0);
   });
 
@@ -59,7 +57,7 @@ describe('score component: code coverage', () => {
         },
       }),
     );
-    const res = await cov.default(mockCore, mockGithub);
+    const res = await cov(mockCore, mockGithub, mockCodecov, mockGetSHA);
     assert.equal(res, 1337);
   });
 
@@ -81,7 +79,7 @@ describe('score component: code coverage', () => {
         }
         return Promise.resolve({ data: {} });
       });
-      const res = await cov.default(mockCore, mockGithub);
+      const res = await cov(mockCore, mockGithub, mockCodecov, mockGetSHA);
       assert.strictEqual(res, 42);
     });
 
@@ -104,7 +102,7 @@ describe('score component: code coverage', () => {
       });
 
       const startTime = performance.now();
-      const res = await cov.default(mockCore, mockGithub);
+      const res = await cov(mockCore, mockGithub, mockCodecov, mockGetSHA);
       const endTime = performance.now();
       assert.equal(res, 42);
       assert.equal(mockCodecov.repos_commits_retrieve.mock.callCount(), 2);
@@ -137,7 +135,7 @@ describe('score component: code coverage', () => {
         return Promise.resolve({ data: { totals: { misses: 42 } } });
       });
 
-      const res = await cov.default(mockCore, mockGithub);
+      const res = await cov(mockCore, mockGithub, mockCodecov, mockGetSHA);
       assert.equal(res, 0);
       assert.equal(mockCodecov.repos_commits_retrieve.mock.callCount(), 1);
       assert.ok(
@@ -161,7 +159,7 @@ describe('score component: code coverage', () => {
         Promise.resolve({ data: {} }),
       );
 
-      await cov.default(mockCore, mockGithub);
+      await cov(mockCore, mockGithub, mockCodecov, mockGetSHA);
       assert.ok(
         mockCore.error.mock.calls.some((c) =>
           c.arguments[0].includes('Reached maximum attempts'),
