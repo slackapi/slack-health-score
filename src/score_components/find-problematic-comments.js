@@ -1,14 +1,23 @@
-import child_process from 'node:child_process';
-import fs from 'node:fs';
-
 const CommentType = Object.freeze({
   TODO: 'TODO',
   FIXME: 'FIXME',
   HACK: 'HACK',
 });
 
+/**
+ * @description Searches for problematic comments (TODO, FIXME, HACK) in the codebase
+ * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
+ * @param {import('node:child_process')} childProcess Node.js child_process module
+ * @param {import('node:fs')} fs Node.js fs module
+ * @param {string[]} ext File extensions to search
+ * @param {string[]} include Directories to include
+ * @param {string[]} exclude Directories to exclude
+ * @returns {Array<{path: string, line_no: number, comment: string, commentType: string|null}>} Array of problematic comments found
+ */
 export default function grepForProblematicComments(
   core,
+  childProcess,
+  fs,
   ext,
   include,
   exclude,
@@ -51,7 +60,7 @@ export default function grepForProblematicComments(
   find += ` -exec sh -c 'grep -EHn "${commentPattern}" "$0"' {} \\;`;
   let output = '';
   try {
-    output = child_process.execSync(find).toString().trim();
+    output = childProcess.execSync(find).toString().trim();
   } catch (e) {
     core.error(e);
     core.error('child_process execSync failed to execute');

@@ -1,16 +1,15 @@
 import assert from 'node:assert';
 import { beforeEach, describe, it, mock } from 'node:test';
-import esmock from 'esmock';
+import grepForProblematicComments from '../../src/score_components/find-problematic-comments.js';
 
 const commentPattern = '\\s*(//|/\\*|\\*).*\\b(TODO|HACK|FIXME)\\b';
 
 describe('score component: problematic comments', () => {
-  let grepForProblematicComments;
   let mockChildProcess;
   let mockFs;
   let mockCore;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     mockChildProcess = {
       execSync: mock.fn(),
     };
@@ -27,15 +26,6 @@ describe('score component: problematic comments', () => {
       info: mock.fn(),
       warning: mock.fn(),
     };
-
-    const module = await esmock(
-      '../../src/score_components/find-problematic-comments.js',
-      {
-        'node:child_process': mockChildProcess,
-        'node:fs': mockFs,
-      },
-    );
-    grepForProblematicComments = module.default;
   });
 
   it('should export a function', () => {
@@ -48,7 +38,14 @@ describe('score component: problematic comments', () => {
     });
     mockFs.existsSync.mock.mockImplementation(() => false);
     const score = {
-      comments: grepForProblematicComments(mockCore, ['js'], [], []),
+      comments: grepForProblematicComments(
+        mockCore,
+        mockChildProcess,
+        mockFs,
+        ['js'],
+        [],
+        [],
+      ),
       coverageMisses: 0,
     };
     assert.ok(
@@ -66,7 +63,14 @@ describe('score component: problematic comments', () => {
       mockChildProcess.execSync.mock.mockImplementation(() => '');
       mockFs.existsSync.mock.mockImplementation(() => false);
       const score = {
-        comments: grepForProblematicComments(mockCore, ['js'], [], []),
+        comments: grepForProblematicComments(
+          mockCore,
+          mockChildProcess,
+          mockFs,
+          ['js'],
+          [],
+          [],
+        ),
         coverageMisses: 0,
       };
       let find = 'find .';
@@ -79,7 +83,14 @@ describe('score component: problematic comments', () => {
     it('should default to gitignore if excludes not provided', () => {
       mockChildProcess.execSync.mock.mockImplementation(() => '');
       mockFs.existsSync.mock.mockImplementation(() => false);
-      grepForProblematicComments(mockCore, ['js'], [], []);
+      grepForProblematicComments(
+        mockCore,
+        mockChildProcess,
+        mockFs,
+        ['js'],
+        [],
+        [],
+      );
       assert.equal(mockFs.existsSync.mock.calls[0].arguments[0], '.gitignore');
     });
 
@@ -89,6 +100,8 @@ describe('score component: problematic comments', () => {
       const score = {
         comments: grepForProblematicComments(
           mockCore,
+          mockChildProcess,
+          mockFs,
           ['js'],
           ['src'],
           ['test/'],
@@ -109,6 +122,8 @@ describe('score component: problematic comments', () => {
       const score = {
         comments: grepForProblematicComments(
           mockCore,
+          mockChildProcess,
+          mockFs,
           ['js', 'ts'],
           ['src', 'dir'],
           ['test/', 'dist'],
@@ -128,7 +143,14 @@ describe('score component: problematic comments', () => {
     it('should handle empty grep results', () => {
       mockChildProcess.execSync.mock.mockImplementation(() => '');
       const score = {
-        comments: grepForProblematicComments(mockCore, ['js'], ['src'], []),
+        comments: grepForProblematicComments(
+          mockCore,
+          mockChildProcess,
+          mockFs,
+          ['js'],
+          ['src'],
+          [],
+        ),
         coverageMisses: 0,
       };
       assert.deepEqual(score.comments, []);
@@ -139,7 +161,14 @@ describe('score component: problematic comments', () => {
         () => 'path:10: // TODO: random stuff',
       );
       const score = {
-        comments: grepForProblematicComments(mockCore, ['js'], ['src'], []),
+        comments: grepForProblematicComments(
+          mockCore,
+          mockChildProcess,
+          mockFs,
+          ['js'],
+          ['src'],
+          [],
+        ),
         coverageMisses: 0,
       };
       assert.deepEqual(score.comments, [
@@ -158,7 +187,14 @@ describe('score component: problematic comments', () => {
           'path:10: // TODO: random stuff \n path2:15: // FIXME: random stuff',
       );
       const score = {
-        comments: grepForProblematicComments(mockCore, ['js'], ['src'], []),
+        comments: grepForProblematicComments(
+          mockCore,
+          mockChildProcess,
+          mockFs,
+          ['js'],
+          ['src'],
+          [],
+        ),
         coverageMisses: 0,
       };
       assert.deepEqual(score.comments, [
@@ -183,7 +219,14 @@ describe('score component: problematic comments', () => {
           'path:10: // TODO: random stuff \n path2:15: // random things TODO',
       );
       const score = {
-        comments: grepForProblematicComments(mockCore, ['js'], ['src'], []),
+        comments: grepForProblematicComments(
+          mockCore,
+          mockChildProcess,
+          mockFs,
+          ['js'],
+          ['src'],
+          [],
+        ),
         coverageMisses: 0,
       };
       assert.deepEqual(score.comments, [
@@ -207,7 +250,14 @@ describe('score component: problematic comments', () => {
         () => 'path:10: // TODO random stuff',
       );
       const score = {
-        comments: grepForProblematicComments(mockCore, ['js'], ['src'], []),
+        comments: grepForProblematicComments(
+          mockCore,
+          mockChildProcess,
+          mockFs,
+          ['js'],
+          ['src'],
+          [],
+        ),
         coverageMisses: 0,
       };
       assert.deepEqual(score.comments, [
@@ -225,7 +275,14 @@ describe('score component: problematic comments', () => {
         () => 'path:10: const result = "hello:world" // TODO: random stuff',
       );
       const score = {
-        comments: grepForProblematicComments(mockCore, ['js'], ['src'], []),
+        comments: grepForProblematicComments(
+          mockCore,
+          mockChildProcess,
+          mockFs,
+          ['js'],
+          ['src'],
+          [],
+        ),
         coverageMisses: 0,
       };
       assert.deepEqual(score.comments, [
