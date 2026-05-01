@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/slackapi/slack-health-score#readme",
   "dependencies": {
-    "@actions/core": "^3.0.0",
+    "@actions/core": "^3.0.1",
     "@actions/github": "^9.1.1",
     "@api/codecov": "file:.api/apis/codecov"
   },
