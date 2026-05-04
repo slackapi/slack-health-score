@@ -34,12 +34,12 @@
   },
   "homepage": "https://github.com/slackapi/slack-health-score#readme",
   "dependencies": {
-    "@actions/core": "^3.0.0",
-    "@actions/github": "^9.0.0",
+    "@actions/core": "^3.0.1",
+    "@actions/github": "^9.1.1",
     "@api/codecov": "file:.api/apis/codecov"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.10",
+    "@biomejs/biome": "2.4.13",
     "@vercel/ncc": "^0.38.4",
     "esmock": "^2.7.3"
   }
