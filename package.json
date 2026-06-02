@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.13",
+    "@changesets/cli": "^2.31.0",
     "@vercel/ncc": "^0.38.4",
     "esmock": "^2.7.3"
   }
