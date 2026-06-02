@@ -1,13 +1,17 @@
-import codecov from '@api/codecov';
-import getSHA from '../get-sha.js';
-
 /**
- * @description Compiles the health score components
+ * @description Retrieves code coverage data from Codecov API
  * @param {import('@actions/core')} core `@actions/core` GitHub Actions core helper utility
  * @param {import('@actions/github')} github `@actions/github` GitHub Actions core helper utility
+ * @param {import('@api/codecov')} codecov Codecov API client
+ * @param {import('../get-sha.js')} getSHA Function to get commit SHA
  * @returns {Promise<number>} Number of uncovered lines of code, or 0 in the case of no codecov token specified
  */
-export default async function retrieveCodeCoverage(core, github) {
+export default async function retrieveCodeCoverage(
+  core,
+  github,
+  codecov,
+  getSHA,
+) {
   // See if we can get a coverage overview for this commit from codecov
   const codecovToken = core.getInput('codecov_token');
   const maxAttempts =
