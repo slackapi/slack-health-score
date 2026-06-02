@@ -44,5 +44,10 @@
     "@changesets/cli": "^2.31.0",
     "@vercel/ncc": "^0.38.4",
     "esmock": "^2.7.3"
+  },
+  "overrides": {
+    "@manypkg/find-root": {
+      "@types/node": ">=20"
+    }
   }
 }
