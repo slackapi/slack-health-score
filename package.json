@@ -6,6 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/index.js -o dist --license licenses.txt --source-map",
+    "changeset": "npx @changesets/cli",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
