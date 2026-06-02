@@ -6,6 +6,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/index.js -o dist --license licenses.txt --source-map",
+    "changeset": "npx @changesets/cli",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "local": "act public --eventpath .github/workflows/local/event.json --secret-file .github/workflows/local/.env --platform ubuntu-latest=node:20-buster",
@@ -40,7 +41,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.13",
+    "@changesets/cli": "^2.31.0",
     "@vercel/ncc": "^0.38.4",
     "esmock": "^2.7.3"
+  },
+  "overrides": {
+    "@manypkg/find-root": {
+      "@types/node": ">=20"
+    }
   }
 }
