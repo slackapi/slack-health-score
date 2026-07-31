@@ -194,5 +194,68 @@ describe('health-score', () => {
       );
       assert.equal(points, -205);
     });
+
+    for (const { annotationCount, updateBatchSizes } of [
+      { annotationCount: 0, updateBatchSizes: [] },
+      { annotationCount: 50, updateBatchSizes: [] },
+      { annotationCount: 51, updateBatchSizes: [1] },
+      { annotationCount: 101, updateBatchSizes: [50, 1] },
+    ]) {
+      it(`should report ${annotationCount} annotations in API-sized batches`, async () => {
+        mocks.inputs = { github_token: 'test' };
+        mocks.github.context = contextValue;
+        const comments = Array.from(
+          { length: annotationCount },
+          (_, index) => ({
+            path: `src/file-${index}.js`,
+            line_no: index + 1,
+            comment: '// TODO: random stuff',
+          }),
+        );
+
+        await hs.report(
+          new Date('2026-07-31T00:00:00.000Z'),
+          mocks.core,
+          mocks.github,
+          { comments, coverageMisses: 0 },
+        );
+
+        assert.equal(mocks.checks.create.mock.callCount(), 1);
+        const createRequest = mocks.checks.create.mock.calls[0].arguments[0];
+        assert.equal(
+          createRequest.output.annotations.length,
+          Math.min(annotationCount, 50),
+        );
+
+        assert.equal(
+          mocks.checks.update.mock.callCount(),
+          updateBatchSizes.length,
+        );
+        updateBatchSizes.forEach((batchSize, index) => {
+          const updateRequest =
+            mocks.checks.update.mock.calls[index].arguments[0];
+          assert.equal(updateRequest.owner, contextValue.repo.owner);
+          assert.equal(updateRequest.repo, contextValue.repo.repo);
+          assert.equal(updateRequest.check_run_id, 1234);
+          assert.equal(updateRequest.output.title, `${annotationCount * -100}`);
+          assert.equal(
+            updateRequest.output.summary,
+            `${annotationCount * -100} health score points`,
+          );
+          assert.equal(updateRequest.output.annotations.length, batchSize);
+        });
+
+        const reportedPaths = [
+          ...createRequest.output.annotations,
+          ...mocks.checks.update.mock.calls.flatMap(
+            (call) => call.arguments[0].output.annotations,
+          ),
+        ].map((annotation) => annotation.path);
+        assert.deepEqual(
+          reportedPaths,
+          comments.map((comment) => comment.path),
+        );
+      });
+    }
   });
 });
