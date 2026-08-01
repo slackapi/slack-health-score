@@ -39,7 +39,7 @@
     "@api/codecov": "file:.api/apis/codecov"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.2",
+    "@biomejs/biome": "2.5.6",
     "@vercel/ncc": "^0.44.1",
     "esmock": "^2.7.6"
   }
