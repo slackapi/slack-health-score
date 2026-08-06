@@ -3,6 +3,7 @@ import { getAnnotations } from './helpers/helper-functions.js';
 
 const UNCOVERED_LINE_PENALTY = 1;
 const PROBLEMATIC_COMMENT_PENALTY = 100;
+const MAX_ANNOTATIONS_PER_REQUEST = 50;
 
 /**
  * @param {Date} startTime the JavaScript Date of the start of this action's run
@@ -46,9 +47,13 @@ ${score.comments.map((c) => `- \`${c.comment}\``).join('\n')}\n`;
 According to [the code coverage for this project](https://app.codecov.io/gh/${ctx.repo.owner}/${ctx.repo.repo}), there are ${score.coverageMisses} uncovered lines of code. Each uncovered line of code contributes -${UNCOVERED_LINE_PENALTY} to the health score.`;
   }
   const annotations = getAnnotations(score.comments);
+  const output = {
+    title: `${points}`,
+    summary: `${points} health score points`,
+  };
   // TODO: handle API call erroring out
   try {
-    await octokit.rest.checks.create({
+    const response = await octokit.rest.checks.create({
       name: 'Health Score',
       owner: ctx.repo.owner,
       repo: ctx.repo.repo,
@@ -58,15 +63,33 @@ According to [the code coverage for this project](https://app.codecov.io/gh/${ct
       completed_at: new Date().toISOString(),
       started_at: startTime.toISOString(),
       output: {
-        title: `${points}`,
-        summary: `${points} health score points`,
+        ...output,
         text: details,
-        annotations,
+        annotations: annotations.slice(0, MAX_ANNOTATIONS_PER_REQUEST),
       },
     });
+
+    for (
+      let offset = MAX_ANNOTATIONS_PER_REQUEST;
+      offset < annotations.length;
+      offset += MAX_ANNOTATIONS_PER_REQUEST
+    ) {
+      await octokit.rest.checks.update({
+        owner: ctx.repo.owner,
+        repo: ctx.repo.repo,
+        check_run_id: response.data.id,
+        output: {
+          ...output,
+          annotations: annotations.slice(
+            offset,
+            offset + MAX_ANNOTATIONS_PER_REQUEST,
+          ),
+        },
+      });
+    }
   } catch (e) {
     core.error(e);
-    core.error('Octokit checks creation call failed');
+    core.error('Octokit checks reporting call failed');
   }
   return points;
 }
