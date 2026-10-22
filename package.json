@@ -29,7 +29,7 @@
     "url": "https://github.com/slackapi/slack-health-score/issues"
   },
   "engines": {
-    "node": ">=24.22.1",
+    "node": ">=20.0.0",
     "npm": ">=10.2.0"
   },
   "homepage": "https://github.com/slackapi/slack-health-score#readme",
