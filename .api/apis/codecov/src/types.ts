@@ -1,5 +1,6 @@
-import type { FromSchema } from 'json-schema-to-ts';
-import * as schemas from './schemas';
+import type { FromSchema } from '@readme/api-core/types';
+import type * as schemas from './schemas.js';
+
 export type ReposBranchesListMetadataParam = FromSchema<typeof schemas.ReposBranchesList.metadata>;
 export type ReposBranchesListResponse200 = FromSchema<typeof schemas.ReposBranchesList.response['200']>;
 export type ReposBranchesRetrieveMetadataParam = FromSchema<typeof schemas.ReposBranchesRetrieve.metadata>;
