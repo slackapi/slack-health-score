@@ -1,11 +1,56 @@
 {
   "name": "@api/codecov",
   "version": "2.0.0",
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "types": "dist/index.d.cts",
+  "module": "dist/index.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./sdk": {
+      "import": "./dist/sdk.js",
+      "require": "./dist/sdk.cjs"
+    },
+    "./types": {
+      "import": "./dist/types.js",
+      "require": "./dist/types.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "openapi.json"
+  ],
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "prepare": "tsup"
+  },
   "dependencies": {
-    "api": "^7.0.0",
-    "json-schema-to-ts": "^3.1.1",
-    "oas": "^37.1.0"
+    "@readme/api-core": "^7.0.3"
+  },
+  "devDependencies": {
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2"
+  },
+  "tsup": {
+    "cjsInterop": true,
+    "clean": true,
+    "dts": true,
+    "entry": [
+      "./src/index.ts",
+      "./src/sdk.ts",
+      "./src/types.ts"
+    ],
+    "format": [
+      "esm",
+      "cjs"
+    ],
+    "minify": false,
+    "shims": true,
+    "sourcemap": true,
+    "splitting": true
   }
 }
