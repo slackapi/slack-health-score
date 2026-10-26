@@ -2,7 +2,8 @@ name: Publish
 
 on:
   release:
-    types: [published, edited]
+    types:
+      - published
 
 jobs:
   build:
@@ -13,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          persist-credentials: false
+          persist-credentials: true
           ref: ${{ github.event.release.tag_name }}
       - name: Install deps
         run: npm ci
@@ -21,7 +22,6 @@ jobs:
         run: npm run build
       - name: Commit the build and move the release tags
         env:
-          GITHUB_TOKEN: ${{ github.token }}
           PRERELEASE: ${{ github.event.release.prerelease }}
           TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
@@ -33,10 +33,11 @@ jobs:
           git add --force action.yml dist
           git commit --message "Automatic compilation"
           tags=("$TAG_NAME")
-          if [ "$PRERELEASE" != "true" ]; then
+          # Move the minor and major tags only for a full vX.Y.Z release.
+          if [ "$PRERELEASE" != "true" ] && [[ "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             tags+=("${TAG_NAME%.*}" "${TAG_NAME%%.*}")
           fi
           for tag in "${tags[@]}"; do
             git tag --force "$tag"
           done
-          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "${tags[@]/#/refs/tags/}"
+          git push --force origin "${tags[@]/#/refs/tags/}"
