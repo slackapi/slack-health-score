@@ -19,8 +19,24 @@ jobs:
         run: npm ci
       - name: Build Action
         run: npm run build
-      - uses: JasonEtco/build-and-tag-action@dd5e4991048c325f6d85b4155e586fc211c644da # v2.0.1
+      - name: Commit the build and move the release tags
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        with:
-          tag_name: ${{ github.event.release.tag_name }}
+          PRERELEASE: ${{ github.event.release.prerelease }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          # Commit all of dist/, not only dist/index.js. The build also writes
+          # code-split chunks, a source map loader, and a package.json that the
+          # action needs at runtime.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --force action.yml dist
+          git commit --message "Automatic compilation"
+          tags=("$TAG_NAME")
+          if [ "$PRERELEASE" != "true" ]; then
+            tags+=("${TAG_NAME%.*}" "${TAG_NAME%%.*}")
+          fi
+          for tag in "${tags[@]}"; do
+            git tag --force "$tag"
+          done
+          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "${tags[@]/#/refs/tags/}"
