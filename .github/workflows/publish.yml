@@ -5,6 +5,10 @@ on:
     types:
       - published
 
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          persist-credentials: true
+          persist-credentials: false
           ref: ${{ github.event.release.tag_name }}
       - name: Install deps
         run: npm ci
@@ -22,6 +26,7 @@ jobs:
         run: npm run build
       - name: Commit the build and move the release tags
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           PRERELEASE: ${{ github.event.release.prerelease }}
           TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
@@ -31,13 +36,26 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add --force action.yml dist
-          git commit --message "Automatic compilation"
+          # A re-run checks out the tag after it already moved to the build.
+          if git diff --cached --quiet; then
+            echo "The build is already committed at $(git rev-parse --short HEAD)"
+          else
+            git commit --message "Automatic compilation"
+          fi
           tags=("$TAG_NAME")
           # Move the minor and major tags only for a full vX.Y.Z release.
-          if [ "$PRERELEASE" != "true" ] && [[ "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] && [ "$PRERELEASE" != "true" ]; then
             tags+=("${TAG_NAME%.*}" "${TAG_NAME%%.*}")
+          elif [ "$PRERELEASE" != "true" ]; then
+            echo "::warning::$TAG_NAME isn't vX.Y.Z, so the minor and major tags were not moved"
           fi
           for tag in "${tags[@]}"; do
             git tag --force "$tag"
           done
-          git push --force origin "${tags[@]/#/refs/tags/}"
+          # Pass the token through the environment, only to this push, so it
+          # never reaches the npm install and build steps.
+          export GIT_CONFIG_COUNT=1
+          export GIT_CONFIG_KEY_0="http.https://github.com/.extraheader"
+          GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          export GIT_CONFIG_VALUE_0
+          git push --atomic --force origin "${tags[@]/#/refs/tags/}"
