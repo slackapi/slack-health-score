@@ -5,10 +5,6 @@ on:
     types:
       - published
 
-concurrency:
-  group: publish
-  cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,7 +19,9 @@ jobs:
       - name: Install deps
         run: npm ci
       - name: Build Action
-        run: npm run build
+        run: |
+          rm -rf dist
+          npm run build
       - name: Commit the build and move the release tags
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -40,7 +38,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "The build is already committed at $(git rev-parse --short HEAD)"
           else
-            git commit --message "Automatic compilation"
+            git -c core.hooksPath=/dev/null commit --message "Automatic compilation"
           fi
           tags=("$TAG_NAME")
           # Move the minor and major tags only for a full vX.Y.Z release.
@@ -52,10 +50,9 @@ jobs:
           for tag in "${tags[@]}"; do
             git tag --force "$tag"
           done
-          # Pass the token through the environment, only to this push, so it
-          # never reaches the npm install and build steps.
-          export GIT_CONFIG_COUNT=1
-          export GIT_CONFIG_KEY_0="http.https://github.com/.extraheader"
-          GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
-          export GIT_CONFIG_VALUE_0
-          git push --atomic --force origin "${tags[@]/#/refs/tags/}"
+          # Give the token to this push only, with git hooks turned off, so
+          # nothing the npm install or build steps wrote can read it.
+          GIT_CONFIG_COUNT=1 \
+            GIT_CONFIG_KEY_0="http.https://github.com/.extraheader" \
+            GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)" \
+            git -c core.hooksPath=/dev/null push --atomic --force origin "${tags[@]/#/refs/tags/}"
