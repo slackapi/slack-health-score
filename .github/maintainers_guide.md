@@ -32,19 +32,19 @@ avoid accidently leaking tokens!
 
 1. Look at the issues merged since the last release and consult the contributors to the next version to release. It must follow [semantic versioning](https://semver.org/).
 2. Create a new branch from `main` name it the release version (example: `v0.1.1`)
-    1. Update the `"version"` field in `package.json`.
-    2. Update all references to versions in the `README.md` to refer to the latest release.
-    3. Run all tests using `npm test` to make sure the tests pass.
+   1. Update the `"version"` field in `package.json`.
+   2. Update all references to versions in the `README.md` to refer to the latest release.
+   3. Run all tests using `npm test` to make sure the tests pass.
 3. Commit the changes and open a Pull Request to merge your release branch into `main`.
 4. Create a GitHub Release:
-    1. `Draft a new release` from the [release page](https://github.com/slackapi/slack-health-score/releases).
-    2. Check the "Publish this Action to the GitHub Marketplace" checkbox.
-    3. Leave the default settings for this project.
-    4. Input a manual tag in the "Choose a tag" input that matches the version in `package.json`; click the "Create a new tag" button under the input. (this will not immediately create a tag, but only once you are doing creating the release)
-    5. Manually select the previous latest tag in the "Previous tag" dropdown, then click "Generate release notes" and review them: make sure they make sense for a consumer of the Action.
-    6. Release title should be automatically populated to match the new tag name. (example: `v0.1.1`)
-    7. Check the `Set as the latest release` box.
-    8. Click "Publish release". This will trigger the `publish.yml` GitHub workflow, which, once complete, will also overwrite the major, minor and patch tags of this project
+   1. `Draft a new release` from the [release page](https://github.com/slackapi/slack-health-score/releases).
+   2. Check the "Publish this Action to the GitHub Marketplace" checkbox.
+   3. Leave the default settings for this project.
+   4. Input a manual tag in the "Choose a tag" input that matches the version in `package.json`; click the "Create a new tag" button under the input. (this will not immediately create a tag, but only once you are doing creating the release)
+   5. Manually select the previous latest tag in the "Previous tag" dropdown, then click "Generate release notes" and review them: make sure they make sense for a consumer of the Action.
+   6. Release title should be automatically populated to match the new tag name. (example: `v0.1.1`)
+   7. Check the `Set as the latest release` box.
+   8. Click "Publish release". This will trigger the `publish.yml` GitHub workflow, which, once complete, will also overwrite the major, minor and patch tags of this project
 5. Notify the appropriate channels of the release.
 
 ## Workflow
@@ -71,18 +71,18 @@ After a major version increment, there also may be maintenance branches created 
 
 Labels are used to run issues through an organized workflow. Here are the basic definitions:
 
-* `bug`: A confirmed bug report. A bug is considered confirmed when reproduction steps have been
-   documented and the issue has been reproduced.
-* `enhancement`: A feature request for something this package might not already do.
-* `docs`: An issue that is purely about documentation work.
-* `tests`: An issue that is purely about testing work.
-* `needs feedback`: An issue that may have claimed to be a bug but was not reproducible, or was otherwise missing some information.
-* `discussion`: An issue that is purely meant to hold a discussion. Typically the maintainers are looking for feedback in this issues.
-* `question`: An issue that is like a support request because the user's usage was not correct.
-* `semver:major|minor|patch`: Metadata about how resolving this issue would affect the version number.
-* `security`: An issue that has special consideration for security reasons.
-* `good first contribution`: An issue that has a well-defined relatively-small scope, with clear expectations. It helps when the testing approach is also known.
-* `duplicate`: An issue that is functionally the same as another issue. Apply this only if you've linked the other issue by number.
+- `bug`: A confirmed bug report. A bug is considered confirmed when reproduction steps have been
+  documented and the issue has been reproduced.
+- `enhancement`: A feature request for something this package might not already do.
+- `docs`: An issue that is purely about documentation work.
+- `tests`: An issue that is purely about testing work.
+- `needs feedback`: An issue that may have claimed to be a bug but was not reproducible, or was otherwise missing some information.
+- `discussion`: An issue that is purely meant to hold a discussion. Typically the maintainers are looking for feedback in this issues.
+- `question`: An issue that is like a support request because the user's usage was not correct.
+- `semver:major|minor|patch`: Metadata about how resolving this issue would affect the version number.
+- `security`: An issue that has special consideration for security reasons.
+- `good first contribution`: An issue that has a well-defined relatively-small scope, with clear expectations. It helps when the testing approach is also known.
+- `duplicate`: An issue that is functionally the same as another issue. Apply this only if you've linked the other issue by number.
 
 **Triage** is the process of taking new issues that aren't yet "seen" and marking them with a basic
 level of information with labels. An issue should have **one** of the following labels applied:
