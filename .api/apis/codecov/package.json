@@ -33,12 +33,12 @@
   },
   "devDependencies": {
     "tsup": "^9.0.0",
-    "typescript": "^5.8.2"
+    "typescript": "^7.0.2"
   },
   "tsup": {
     "cjsInterop": true,
     "clean": true,
-    "dts": true,
+    "dts": false,
     "entry": [
       "./src/index.ts",
       "./src/sdk.ts",
