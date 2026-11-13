@@ -56,3 +56,20 @@ jobs:
             GIT_CONFIG_KEY_0="http.https://github.com/.extraheader" \
             GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)" \
             git -c core.hooksPath=/dev/null push --atomic --force origin "${tags[@]/#/refs/tags/}"
+  notify:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    if: ${{ !github.event.release.prerelease && github.repository == 'slackapi/slack-health-score' }}
+    permissions:
+      contents: read
+    steps:
+      - name: Notify Slack
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
+        with:
+          webhook: ${{ secrets.SLACK_RELEASE_ANNOUNCEMENTS_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
+          payload: |
+            action_url: "${{ github.event.release.html_url }}"
+            message: "slack-health-score ${{ github.event.release.tag_name }}"
+            repository: "${{ github.repository }}"
