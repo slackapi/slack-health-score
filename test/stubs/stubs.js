@@ -19,6 +19,17 @@ export class Mock {
       warning: mock.fn(),
     };
 
+    this.checks = {
+      create: mock.fn(() =>
+        Promise.resolve({
+          data: {
+            id: 1234,
+          },
+        }),
+      ),
+      update: mock.fn(() => Promise.resolve({})),
+    };
+
     this.github = {
       context: {
         eventName: '',
@@ -28,9 +39,7 @@ export class Mock {
       },
       getOctokit: mock.fn(() => ({
         rest: {
-          checks: {
-            create: mock.fn(() => Promise.resolve({})),
-          },
+          checks: this.checks,
         },
       })),
     };
@@ -76,6 +85,8 @@ export class Mock {
     this.core.setFailed.mock.resetCalls();
     this.core.setOutput.mock.resetCalls();
     this.core.warning.mock.resetCalls();
+    this.checks.create.mock.resetCalls();
+    this.checks.update.mock.resetCalls();
     this.github.getOctokit.mock.resetCalls();
     this.codecov.auth.mock.resetCalls();
     this.codecov.repos_commits_retrieve.mock.resetCalls();
