@@ -58,6 +58,13 @@ export class Mock {
     this._grepReturns = [];
     this._coverageReturns = 0;
 
+    this.deps = {
+      codecov: this.codecov,
+      getSHA: mock.fn(() => 'abc123'),
+      childProcess: this.childProcess,
+      fs: this.fs,
+    };
+
     // Create method mocks for hs module
     this.grep = mock.method(hs, 'grep', () => this._grepReturns);
     this.coverage = mock.method(hs, 'coverage', () =>

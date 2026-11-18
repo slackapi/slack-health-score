@@ -32,7 +32,7 @@ describe('health-score', () => {
           exclude: 'test',
         };
         mocks.github.context = contextValue;
-        await hs.compile(mocks.core, mocks.github);
+        await hs.compile(mocks.core, mocks.github, mocks.deps);
         assert.ok(
           mocks.core.warning.mock.calls.some((c) =>
             c.arguments[0].includes('Directories to be included not specified'),
@@ -47,7 +47,7 @@ describe('health-score', () => {
           exclude: '',
         };
         mocks.github.context = contextValue;
-        await hs.compile(mocks.core, mocks.github);
+        await hs.compile(mocks.core, mocks.github, mocks.deps);
         assert.ok(
           mocks.core.error.mock.calls.some((c) =>
             c.arguments[0].includes('Extensions not specified'),
@@ -66,10 +66,10 @@ describe('health-score', () => {
       mocks._grepReturns = [''];
       mocks._coverageReturns = 0;
 
-      await hs.compile(mocks.core, mocks.github);
+      await hs.compile(mocks.core, mocks.github, mocks.deps);
 
       assert.equal(mocks.grep.mock.callCount(), 1);
-      const [core, exts, includes, excludes] =
+      const [core, _childProcess, _fs, exts, includes, excludes] =
         mocks.grep.mock.calls[0].arguments;
       assert.equal(core, mocks.core);
       assert.deepEqual(exts, ['js']);
@@ -92,10 +92,10 @@ describe('health-score', () => {
       mocks._grepReturns = [''];
       mocks._coverageReturns = 0;
 
-      await hs.compile(mocks.core, mocks.github);
+      await hs.compile(mocks.core, mocks.github, mocks.deps);
 
       assert.equal(mocks.grep.mock.callCount(), 1);
-      const [_core, exts, includes, excludes] =
+      const [_core, _childProcess, _fs, exts, includes, excludes] =
         mocks.grep.mock.calls[0].arguments;
       assert.deepEqual(exts, ['js', 'ts']);
       assert.deepEqual(includes, ['src', 'lib']);
@@ -114,10 +114,10 @@ describe('health-score', () => {
       mocks._grepReturns = [''];
       mocks._coverageReturns = 0;
 
-      await hs.compile(mocks.core, mocks.github);
+      await hs.compile(mocks.core, mocks.github, mocks.deps);
 
       assert.equal(mocks.grep.mock.callCount(), 1);
-      const [_core, exts, includes, excludes] =
+      const [_core, _childProcess, _fs, exts, includes, excludes] =
         mocks.grep.mock.calls[0].arguments;
       assert.deepEqual(exts, ['js', 'ts']);
       assert.deepEqual(includes, ['src', 'lib']);
@@ -136,10 +136,10 @@ describe('health-score', () => {
       mocks._grepReturns = [''];
       mocks._coverageReturns = 0;
 
-      await hs.compile(mocks.core, mocks.github);
+      await hs.compile(mocks.core, mocks.github, mocks.deps);
 
       assert.equal(mocks.grep.mock.callCount(), 1);
-      const [_core, exts, includes, excludes] =
+      const [_core, _childProcess, _fs, exts, includes, excludes] =
         mocks.grep.mock.calls[0].arguments;
       assert.deepEqual(exts, ['js', 'ts']);
       assert.deepEqual(includes, ['src', 'lib']);

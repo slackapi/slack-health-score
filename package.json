@@ -40,7 +40,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",
-    "@vercel/ncc": "^0.45.0",
-    "esmock": "^3.0.0"
+    "@vercel/ncc": "^0.45.0"
   }
 }
