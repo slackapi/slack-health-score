@@ -11,8 +11,10 @@ jobs:
     steps:
       - name: Checkout action
         uses: actions/checkout@v4
-      - name: Build action
+      - name: Install dependencies
         run: npm ci
+      - name: Build action
+        run: npm run build
       - name: Healthscore the healthscore
         id: slack-health-score
         uses: ./.

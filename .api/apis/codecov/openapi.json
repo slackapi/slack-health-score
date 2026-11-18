@@ -6768,7 +6768,9 @@
         "required": [
           "name",
           "updatestamp"
-        ]
+        ],
+        "title": "Branch",
+        "x-readme-ref-name": "Branch"
       },
       "BranchDetail": {
         "type": "object",
@@ -7154,7 +7156,9 @@
           "head_commit",
           "name",
           "updatestamp"
-        ]
+        ],
+        "title": "BranchDetail",
+        "x-readme-ref-name": "BranchDetail"
       },
       "Commit": {
         "type": "object",
@@ -7324,7 +7328,9 @@
           "state",
           "timestamp",
           "totals"
-        ]
+        ],
+        "title": "Commit",
+        "x-readme-ref-name": "Commit"
       },
       "CommitDetail": {
         "type": "object",
@@ -7685,7 +7691,9 @@
           "state",
           "timestamp",
           "totals"
-        ]
+        ],
+        "title": "CommitDetail",
+        "x-readme-ref-name": "CommitDetail"
       },
       "CommitTotals": {
         "type": "object",
@@ -7752,7 +7760,9 @@
           "misses",
           "partials",
           "sessions"
-        ]
+        ],
+        "title": "CommitTotals",
+        "x-readme-ref-name": "CommitTotals"
       },
       "CommitUploads": {
         "type": "object",
@@ -7858,7 +7868,9 @@
           "updated_at",
           "upload_extras",
           "upload_type"
-        ]
+        ],
+        "title": "CommitUploads",
+        "x-readme-ref-name": "CommitUploads"
       },
       "Comparison": {
         "type": "object",
@@ -8295,7 +8307,9 @@
           "head_commit",
           "totals",
           "untracked"
-        ]
+        ],
+        "title": "Comparison",
+        "x-readme-ref-name": "Comparison"
       },
       "Component": {
         "type": "object",
@@ -8317,7 +8331,9 @@
           "component_id",
           "coverage",
           "name"
-        ]
+        ],
+        "title": "Component",
+        "x-readme-ref-name": "Component"
       },
       "ComponentComparison": {
         "type": "object",
@@ -8545,7 +8561,9 @@
           "diff_totals",
           "head_report_totals",
           "name"
-        ]
+        ],
+        "title": "ComponentComparison",
+        "x-readme-ref-name": "ComponentComparison"
       },
       "CoverageReport": {
         "type": "object",
@@ -8735,7 +8753,9 @@
           "commit_file_url",
           "files",
           "totals"
-        ]
+        ],
+        "title": "CoverageReport",
+        "x-readme-ref-name": "CoverageReport"
       },
       "FileComparison": {
         "type": "object",
@@ -9023,7 +9043,9 @@
           "name",
           "stats",
           "totals"
-        ]
+        ],
+        "title": "FileComparison",
+        "x-readme-ref-name": "FileComparison"
       },
       "FileReport": {
         "type": "object",
@@ -9130,7 +9152,9 @@
           "line_coverage",
           "name",
           "totals"
-        ]
+        ],
+        "title": "FileReport",
+        "x-readme-ref-name": "FileReport"
       },
       "Flag": {
         "type": "object",
@@ -9141,7 +9165,9 @@
         },
         "required": [
           "flag_name"
-        ]
+        ],
+        "title": "Flag",
+        "x-readme-ref-name": "Flag"
       },
       "FlagComparison": {
         "type": "object",
@@ -9299,7 +9325,9 @@
           "diff_totals",
           "head_report_totals",
           "name"
-        ]
+        ],
+        "title": "FlagComparison",
+        "x-readme-ref-name": "FlagComparison"
       },
       "ImpactedFileSegment": {
         "type": "object",
@@ -9321,7 +9349,9 @@
           "has_unintended_changes",
           "header",
           "lines"
-        ]
+        ],
+        "title": "ImpactedFileSegment",
+        "x-readme-ref-name": "ImpactedFileSegment"
       },
       "ImpactedFileSegments": {
         "type": "object",
@@ -9356,7 +9386,9 @@
         },
         "required": [
           "segments"
-        ]
+        ],
+        "title": "ImpactedFileSegments",
+        "x-readme-ref-name": "ImpactedFileSegments"
       },
       "ImpactedFilesComparison": {
         "type": "object",
@@ -9798,7 +9830,9 @@
           "state",
           "totals",
           "untracked"
-        ]
+        ],
+        "title": "ImpactedFilesComparison",
+        "x-readme-ref-name": "ImpactedFilesComparison"
       },
       "LineComparison": {
         "type": "object",
@@ -9835,7 +9869,9 @@
           "removed",
           "sessions",
           "value"
-        ]
+        ],
+        "title": "LineComparison",
+        "x-readme-ref-name": "LineComparison"
       },
       "Measurement": {
         "type": "object",
@@ -9866,7 +9902,9 @@
           "max",
           "min",
           "timestamp"
-        ]
+        ],
+        "title": "Measurement",
+        "x-readme-ref-name": "Measurement"
       },
       "Owner": {
         "type": "object",
@@ -9903,7 +9941,9 @@
           "name",
           "service",
           "username"
-        ]
+        ],
+        "title": "Owner",
+        "x-readme-ref-name": "Owner"
       },
       "PaginatedBranchList": {
         "type": "object",
@@ -9945,7 +9985,9 @@
               ]
             }
           }
-        }
+        },
+        "title": "PaginatedBranchList",
+        "x-readme-ref-name": "PaginatedBranchList"
       },
       "PaginatedCommitList": {
         "type": "object",
@@ -10139,7 +10181,9 @@
               ]
             }
           }
-        }
+        },
+        "title": "PaginatedCommitList",
+        "x-readme-ref-name": "PaginatedCommitList"
       },
       "PaginatedCommitUploadsList": {
         "type": "object",
@@ -10269,7 +10313,9 @@
               ]
             }
           }
-        }
+        },
+        "title": "PaginatedCommitUploadsList",
+        "x-readme-ref-name": "PaginatedCommitUploadsList"
       },
       "PaginatedFlagList": {
         "type": "object",
@@ -10304,7 +10350,9 @@
               ]
             }
           }
-        }
+        },
+        "title": "PaginatedFlagList",
+        "x-readme-ref-name": "PaginatedFlagList"
       },
       "PaginatedMeasurementList": {
         "type": "object",
@@ -10359,7 +10407,9 @@
               ]
             }
           }
-        }
+        },
+        "title": "PaginatedMeasurementList",
+        "x-readme-ref-name": "PaginatedMeasurementList"
       },
       "PaginatedOwnerList": {
         "type": "object",
@@ -10420,7 +10470,9 @@
               ]
             }
           }
-        }
+        },
+        "title": "PaginatedOwnerList",
+        "x-readme-ref-name": "PaginatedOwnerList"
       },
       "PaginatedPullList": {
         "type": "object",
@@ -10676,7 +10728,9 @@
               ]
             }
           }
-        }
+        },
+        "title": "PaginatedPullList",
+        "x-readme-ref-name": "PaginatedPullList"
       },
       "PaginatedRepoList": {
         "type": "object",
@@ -10859,7 +10913,9 @@
               ]
             }
           }
-        }
+        },
+        "title": "PaginatedRepoList",
+        "x-readme-ref-name": "PaginatedRepoList"
       },
       "PaginatedUserList": {
         "type": "object",
@@ -10923,7 +10979,9 @@
               ]
             }
           }
-        }
+        },
+        "title": "PaginatedUserList",
+        "x-readme-ref-name": "PaginatedUserList"
       },
       "Pull": {
         "type": "object",
@@ -11155,7 +11213,9 @@
           "state",
           "title",
           "updatestamp"
-        ]
+        ],
+        "title": "Pull",
+        "x-readme-ref-name": "Pull"
       },
       "PullStateEnum": {
         "enum": [
@@ -11164,7 +11224,9 @@
           "closed"
         ],
         "type": "string",
-        "description": "* `open` - Open\n* `merged` - Merged\n* `closed` - Closed"
+        "description": "* `open` - Open\n* `merged` - Merged\n* `closed` - Closed",
+        "title": "PullStateEnum",
+        "x-readme-ref-name": "PullStateEnum"
       },
       "Repo": {
         "type": "object",
@@ -11323,7 +11385,9 @@
           "private",
           "totals",
           "updatestamp"
-        ]
+        ],
+        "title": "Repo",
+        "x-readme-ref-name": "Repo"
       },
       "RepoConfig": {
         "type": "object",
@@ -11340,7 +11404,9 @@
         "required": [
           "graph_token",
           "upload_token"
-        ]
+        ],
+        "title": "RepoConfig",
+        "x-readme-ref-name": "RepoConfig"
       },
       "Report": {
         "type": "object",
@@ -11525,7 +11591,9 @@
         "required": [
           "files",
           "totals"
-        ]
+        ],
+        "title": "Report",
+        "x-readme-ref-name": "Report"
       },
       "ReportFile": {
         "type": "object",
@@ -11620,7 +11688,9 @@
           "line_coverage",
           "name",
           "totals"
-        ]
+        ],
+        "title": "ReportFile",
+        "x-readme-ref-name": "ReportFile"
       },
       "ReportTotals": {
         "type": "object",
@@ -11690,7 +11760,9 @@
           "misses",
           "partials",
           "sessions"
-        ]
+        ],
+        "title": "ReportTotals",
+        "x-readme-ref-name": "ReportTotals"
       },
       "ServiceEnum": {
         "enum": [
@@ -11702,7 +11774,9 @@
           "bitbucket_server"
         ],
         "type": "string",
-        "description": "* `github` - Github\n* `gitlab` - Gitlab\n* `bitbucket` - Bitbucket\n* `github_enterprise` - Github Enterprise\n* `gitlab_enterprise` - Gitlab Enterprise\n* `bitbucket_server` - Bitbucket Server"
+        "description": "* `github` - Github\n* `gitlab` - Gitlab\n* `bitbucket` - Bitbucket\n* `github_enterprise` - Github Enterprise\n* `gitlab_enterprise` - Gitlab Enterprise\n* `bitbucket_server` - Bitbucket Server",
+        "title": "ServiceEnum",
+        "x-readme-ref-name": "ServiceEnum"
       },
       "State328Enum": {
         "enum": [
@@ -11712,7 +11786,9 @@
           "skipped"
         ],
         "type": "string",
-        "description": "* `complete` - Complete\n* `pending` - Pending\n* `error` - Error\n* `skipped` - Skipped"
+        "description": "* `complete` - Complete\n* `pending` - Pending\n* `error` - Error\n* `skipped` - Skipped",
+        "title": "State328Enum",
+        "x-readme-ref-name": "State328Enum"
       },
       "TotalsComparison": {
         "type": "object",
@@ -11932,7 +12008,9 @@
           "base",
           "head",
           "patch"
-        ]
+        ],
+        "title": "TotalsComparison",
+        "x-readme-ref-name": "TotalsComparison"
       },
       "Tree": {
         "type": "object",
@@ -11968,7 +12046,9 @@
           "misses",
           "name",
           "partials"
-        ]
+        ],
+        "title": "Tree",
+        "x-readme-ref-name": "Tree"
       },
       "UploadTotals": {
         "type": "object",
@@ -12009,7 +12089,9 @@
           "methods",
           "misses",
           "partials"
-        ]
+        ],
+        "title": "UploadTotals",
+        "x-readme-ref-name": "UploadTotals"
       },
       "User": {
         "type": "object",
@@ -12049,7 +12131,9 @@
           "activated",
           "is_admin",
           "service"
-        ]
+        ],
+        "title": "User",
+        "x-readme-ref-name": "User"
       }
     },
     "securitySchemes": {
